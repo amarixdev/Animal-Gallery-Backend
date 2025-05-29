@@ -20,7 +20,7 @@ public class AnimalController {
     }
 
     @GetMapping("/animal")
-    Animal getAnimal(@RequestParam String color, @RequestParam String name) {
+    Animal getAnimal(@RequestParam(required = false) String color, @RequestParam(required = false) String name) {
         if (color != null)
             return animalService.getAnimalByColor(color);
         if (name != null)
@@ -28,8 +28,6 @@ public class AnimalController {
         
         throw new IllegalArgumentException("Must provide either color or name");
     }
-
-  
 
 
     @PostMapping("/animals")
