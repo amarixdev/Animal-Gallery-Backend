@@ -16,11 +16,11 @@ public class Animal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long animalId;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String color;
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String scientificName;
     @Column(nullable = false)
     private String habitat;
@@ -33,6 +33,9 @@ public class Animal {
     @Column(nullable = false)
     private List<String> funFacts;
 
+    public Animal() {
+    // required by JPA
+}
  
     public Animal(String color, String name, String scientificName, String habitat, String description, String diet,
         String lifespan, List<String> funFacts) {
