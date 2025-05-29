@@ -12,11 +12,11 @@ public class AnimalService {
     private AnimalRepository animalRepository;
 
     public Animal getAnimalByColor(String color) {
-        return animalRepository.findByColor(color);
+        return animalRepository.findByColorIgnoreCase(color);
     }
 
     public Animal getAnimalByName(String name) {
-        return animalRepository.findByName(name);
+        return animalRepository.findByNameIgnoreCase(name);
     }
 
     public List<Animal> getAllAnimals() {

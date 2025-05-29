@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
     
-    Animal findByColor(String color);
-    Animal findByName(String name);
+    Animal findByColorIgnoreCase(String color);
+    Animal findByNameIgnoreCase(String name);
     
 
 }
