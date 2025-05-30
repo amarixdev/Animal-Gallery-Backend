@@ -23,6 +23,10 @@ public class AnimalService {
         return animalRepository.findAll();
     }
 
+    public List<Animal> getAnimalsByLifespan(double lifespan) {
+        return animalRepository.findByLifespan(lifespan);
+    }
+
     public Animal addAnimal(Animal animal) {
       return animalRepository.save(animal);
     }

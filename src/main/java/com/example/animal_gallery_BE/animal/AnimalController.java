@@ -15,12 +15,18 @@ public class AnimalController {
 
 
     @GetMapping("/animals")
-    List<Animal> getAllAnimals() {
-        return animalService.getAllAnimals();
+    List<Animal> getAllAnimals(@RequestParam(required = false) Double lifespan) {
+        if (lifespan != null)
+            return animalService.getAnimalsByLifespan(lifespan);
+        else {
+            return animalService.getAllAnimals();
+        }
     }
 
     @GetMapping("/animal")
-    Animal getAnimal(@RequestParam(required = false) String color, @RequestParam(required = false) String name) {
+    Animal getAnimal(
+             @RequestParam(required = false) String color,
+             @RequestParam(required = false) String name) {
         if (color != null)
             return animalService.getAnimalByColor(color);
         if (name != null)

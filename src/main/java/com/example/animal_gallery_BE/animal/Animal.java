@@ -29,7 +29,7 @@ public class Animal {
     @Column(nullable = false)
     private String diet;
     @Column(nullable = false)
-    private String lifespan;
+    private double lifespan; //years
     @Column(nullable = false)
     private List<String> funFacts;
 
@@ -38,7 +38,7 @@ public class Animal {
 }
  
     public Animal(String color, String name, String scientificName, String habitat, String description, String diet,
-        String lifespan, List<String> funFacts) {
+        double lifespan, List<String> funFacts) {
         this.color = color;
         this.name = name;
         this.scientificName = scientificName;
@@ -78,7 +78,7 @@ public class Animal {
             return diet;
     }
 
-    public String getLifespan() {
+    public double getLifespan() {
         return lifespan;
     }
 
@@ -114,7 +114,7 @@ public class Animal {
         this.diet = diet;
     }
 
-    public void setLifespan(String lifespan) {
+    public void setLifespan(double lifespan) {
         this.lifespan = lifespan;
     }
 
