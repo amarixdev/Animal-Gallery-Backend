@@ -1,0 +1,344 @@
+import { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+
+function AddAnimalPage() {
+  const { colorName } = useParams<{ colorName: string }>();
+  const navigate = useNavigate();
+
+  // Color mapping for dynamic theming
+  const colorMap: { [key: string]: { primary: string; subtle: string } } = {
+    red: { primary: '#ef4444', subtle: '#3f1212' },
+    orange: { primary: '#f97316', subtle: '#4d2a0b' },
+    yellow: { primary: '#facc15', subtle: '#4a3f0c' },
+    green: { primary: '#22c55e', subtle: '#103b21' },
+    blue: { primary: '#3b82f6', subtle: '#152a4c' },
+    indigo: { primary: '#6366f1', subtle: '#22234e' },
+    violet: { primary: '#8b5cf6', subtle: '#2e1e4e' },
+    white: { primary: '#ffffff', subtle: '#333333' }
+  };
+
+  const defaultColor = { primary: '#8b5cf6', subtle: '#2e1e4e' };
+  const currentColor = colorMap[colorName?.toLowerCase() || ''] || defaultColor;
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    scientificName: '',
+    habitat: '',
+    description: '',
+    diet: '',
+    lifespan: '',
+    image: null as File | null,
+    funFacts: ['']
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData(prev => ({
+      ...prev,
+      image: file
+    }));
+  };
+
+  const handleFunFactChange = (index: number, value: string) => {
+    const newFunFacts = [...formData.funFacts];
+    newFunFacts[index] = value;
+    setFormData(prev => ({
+      ...prev,
+      funFacts: newFunFacts
+    }));
+  };
+
+  const addFunFact = () => {
+    setFormData(prev => ({
+      ...prev,
+      funFacts: [...prev.funFacts, '']
+    }));
+  };
+
+  const removeFunFact = (index: number) => {
+    if (formData.funFacts.length > 1) {
+      const newFunFacts = formData.funFacts.filter((_, i) => i !== index);
+      setFormData(prev => ({
+        ...prev,
+        funFacts: newFunFacts
+      }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Submit to backend
+    console.log('Submitting animal data:', {
+      ...formData,
+      color: colorName,
+      lifespan: parseFloat(formData.lifespan),
+      funFacts: formData.funFacts.filter(fact => fact.trim() !== '')
+    });
+    // Navigate to all animals page after submission
+    navigate('/all');
+  };
+
+  const inputClassName = `w-full px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
+                          border-2 border-slate-700/80 rounded-full
+                          focus:outline-none focus:ring-2 focus:border-2
+                          transition-all duration-300 ease-in-out text-lg
+                          shadow-lg shadow-black/20`;
+
+  const inputStyle = {
+    '--tw-ring-color': `${currentColor.primary}80`,
+    borderColor: `${currentColor.primary}40`
+  } as React.CSSProperties;
+
+  return (
+    <div 
+      className="min-h-screen flex flex-col p-8 transition-[background] duration-1000 ease-in-out relative"
+      style={{
+        background: `linear-gradient(to bottom right, ${currentColor.subtle}, #000, ${currentColor.subtle})`
+      }}
+    >
+      {/* Back Button - Top Left */}
+      <Link 
+        to={`/${colorName}`}
+        className="absolute top-8 left-8 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                   hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                   text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+      >
+        ← Back to {colorName}
+      </Link>
+
+      {/* Header Section */}
+      <div className="flex flex-col items-center space-y-8 mb-16 mt-8">
+        <h1 className="text-6xl font-bold text-white uppercase tracking-widest
+                       bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent
+                       md:text-5xl sm:text-4xl">
+          Add {colorName} Animal
+        </h1>
+      </div>
+
+      {/* Form Section */}
+      <div className="flex-1 flex justify-center">
+        <form onSubmit={handleSubmit} className="w-full max-w-6xl space-y-8">
+          
+          {/* Basic Information Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Name */}
+            <div>
+              <label className="block text-white text-lg font-medium mb-2">Animal Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className={inputClassName}
+                style={inputStyle}
+                placeholder="e.g., Red Cardinal"
+              />
+            </div>
+
+            {/* Scientific Name */}
+            <div>
+              <label className="block text-white text-lg font-medium mb-2">Scientific Name</label>
+              <input
+                type="text"
+                name="scientificName"
+                value={formData.scientificName}
+                onChange={handleInputChange}
+                required
+                className={inputClassName}
+                style={inputStyle}
+                placeholder="e.g., Cardinalis cardinalis"
+              />
+            </div>
+          </div>
+
+          {/* Habitat and Diet Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Habitat */}
+            <div>
+              <label className="block text-white text-lg font-medium mb-2">Habitat</label>
+              <input
+                type="text"
+                name="habitat"
+                value={formData.habitat}
+                onChange={handleInputChange}
+                required
+                className={inputClassName}
+                style={inputStyle}
+                placeholder="e.g., Forests, gardens, shrublands"
+              />
+            </div>
+
+            {/* Diet */}
+            <div>
+              <label className="block text-white text-lg font-medium mb-2">Diet</label>
+              <input
+                type="text"
+                name="diet"
+                value={formData.diet}
+                onChange={handleInputChange}
+                required
+                className={inputClassName}
+                style={inputStyle}
+                placeholder="e.g., Seeds, insects, fruits"
+              />
+            </div>
+          </div>
+
+          {/* Lifespan and Image Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Lifespan */}
+            <div>
+              <label className="block text-white text-lg font-medium mb-2">Lifespan (years)</label>
+              <input
+                type="number"
+                name="lifespan"
+                value={formData.lifespan}
+                onChange={handleInputChange}
+                required
+                step="0.1"
+                min="0"
+                className={inputClassName}
+                style={inputStyle}
+                placeholder="e.g., 3.5"
+              />
+            </div>
+
+            {/* Image Upload */}
+            <div>
+              <label className="block text-white text-lg font-medium mb-2">Animal Image</label>
+              <div className="flex flex-col items-center space-y-4">
+                {/* Image Preview Circle */}
+                <div 
+                  className="w-56 h-56 rounded-full border-4 cursor-pointer
+                             transition-all duration-300 ease-out
+                             hover:scale-105 hover:shadow-lg
+                             flex items-center justify-center overflow-hidden
+                             relative group"
+                  style={{
+                    backgroundColor: `${currentColor.primary}10`,
+                    borderColor: `${currentColor.primary}60`,
+                    boxShadow: `0 0 20px ${currentColor.primary}30`
+                  }}
+                >
+                  <input
+                    type="file"
+                    name="image"
+                    onChange={handleImageChange}
+                    required
+                    accept="image/*"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  
+                  {formData.image ? (
+                    <img 
+                      src={URL.createObjectURL(formData.image)}
+                      alt="Animal preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center p-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-8 h-8 mb-2" style={{ color: currentColor.primary }}>
+                        <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25v9.5A2.25 2.25 0 0116.75 17H3.25A2.25 2.25 0 011 14.75v-9.5zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 00.75-.75v-2.69l-2.22-2.219a.75.75 0 00-1.06 0l-1.91 1.909.47.47a.75.75 0 11-1.06 1.06L6.53 8.091a.75.75 0 00-1.06 0l-2.97 2.97z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-xs font-medium opacity-80" style={{ color: currentColor.primary }}>
+                        Click to upload
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">
+                      {formData.image ? 'Change Image' : 'Upload Image'}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* File name display */}
+                {formData.image && (
+                  <span className="text-white text-sm opacity-80 text-center max-w-full truncate">
+                    {formData.image.name}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+
+          {/* Fun Facts Section */}
+          <div>
+            <label className="block text-white text-lg font-medium mb-4">Fun Facts</label>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {formData.funFacts.map((fact, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={fact}
+                    onChange={(e) => handleFunFactChange(index, e.target.value)}
+                    className="flex-1 px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
+                               border-2 border-slate-700/80 rounded-full
+                               focus:outline-none focus:ring-2 focus:border-2
+                               transition-all duration-300 ease-in-out text-lg
+                               shadow-lg shadow-black/20"
+                    style={inputStyle}
+                    placeholder={`Fun fact #${index + 1}`}
+                  />
+                  {formData.funFacts.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeFunFact(index)}
+                      className="px-4 py-4 bg-red-500/20 text-red-400 border-2 border-red-500/60 rounded-full
+                                 hover:bg-red-500/30 transition-all duration-300 flex-shrink-0"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={addFunFact}
+                className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                           hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                           text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+              >
+                + Add Fun Fact
+              </button>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center pt-8">
+            <button
+              type="submit"
+              className="px-12 py-4 text-xl font-bold text-white rounded-full border-2
+                         transition-all duration-300 ease-out
+                         hover:scale-105 hover:shadow-lg uppercase tracking-wider"
+              style={{
+                backgroundColor: `${currentColor.primary}30`,
+                borderColor: currentColor.primary,
+                color: currentColor.primary
+              }}
+            >
+              Add Animal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default AddAnimalPage; 

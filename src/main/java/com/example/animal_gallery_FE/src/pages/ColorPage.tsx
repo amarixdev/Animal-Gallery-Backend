@@ -72,10 +72,11 @@ function ColorPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center space-y-12">
         {/* Add New Animal Button */}
-        <button 
+        <Link
+          to={`/${colorName}/create`}
           className="px-8 py-4 text-xl font-bold text-white rounded-full border-2
                      transition-all duration-300 ease-out
-                     hover:scale-105 hover:shadow-lg uppercase tracking-wider"
+                     hover:scale-105 hover:shadow-lg uppercase tracking-wider inline-block"
           style={{
             backgroundColor: `${currentColor.primary}20`,
             borderColor: currentColor.primary,
@@ -83,7 +84,7 @@ function ColorPage() {
           }}
         >
           + Add a New Animal
-        </button>
+        </Link>
 
         {/* Animals Grid */}
         <div className="flex gap-8 flex-wrap justify-center items-center">
@@ -109,7 +110,8 @@ function ColorPage() {
 
           {/* View More Arrow */}
           <div className="relative group">
-            <button 
+            <Link
+              to="/all"
               className="w-32 h-32 rounded-full border-4 cursor-pointer
                          transition-all duration-300 ease-out
                          hover:scale-110 hover:shadow-lg
@@ -130,7 +132,7 @@ function ColorPage() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </button>
+            </Link>
             
             {/* Hover Text */}
             <div className="absolute bottom-[-40px] left-1/2 transform -translate-x-1/2
