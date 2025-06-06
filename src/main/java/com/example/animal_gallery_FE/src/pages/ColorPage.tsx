@@ -89,29 +89,29 @@ function ColorPage() {
         {/* Animals Grid */}
         <div className="flex gap-8 flex-wrap justify-center items-center">
           {[1, 2, 3].map((index) => (
-            <div
+            <Link
               key={index}
+              to={`/${colorName}/${index}`}
               className="w-32 h-32 rounded-full border-4 cursor-pointer
                          transition-all duration-300 ease-out
-                         hover:scale-110 hover:shadow-lg"
+                         hover:scale-110 hover:shadow-lg
+                         flex items-center justify-center"
               style={{
                 backgroundColor: `${currentColor.primary}20`,
                 borderColor: `${currentColor.primary}60`,
                 boxShadow: `0 0 20px ${currentColor.primary}30`
               }}
             >
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-2xl font-bold opacity-60" style={{ color: currentColor.primary }}>
-                  {index}
-                </span>
-              </div>
-            </div>
+              <span className="text-2xl font-bold opacity-60" style={{ color: currentColor.primary }}>
+                {index}
+              </span>
+            </Link>
           ))}
 
           {/* View More Arrow */}
           <div className="relative group">
             <Link
-              to="/all"
+              to={`/${colorName}/all`}
               className="w-32 h-32 rounded-full border-4 cursor-pointer
                          transition-all duration-300 ease-out
                          hover:scale-110 hover:shadow-lg

@@ -72,7 +72,8 @@ function AllAnimalsPage() {
                 className="flex flex-col items-center space-y-2 group"
               >
                 {/* Animal Circle */}
-                <div
+                <Link
+                  to={`/${animal.color}/${animal.id}`}
                   className="w-24 h-24 rounded-full border-4 cursor-pointer
                              transition-all duration-300 ease-out
                              hover:scale-110 hover:shadow-lg
@@ -89,7 +90,7 @@ function AllAnimalsPage() {
                   >
                     {animal.id}
                   </span>
-                </div>
+                </Link>
                 
                 {/* Animal Name */}
                 <span className="text-white text-sm font-medium opacity-80 text-center group-hover:opacity-100 transition-opacity duration-300">
