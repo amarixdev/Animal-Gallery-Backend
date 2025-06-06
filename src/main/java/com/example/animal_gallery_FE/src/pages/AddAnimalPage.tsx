@@ -83,8 +83,8 @@ function AddAnimalPage() {
       lifespan: parseFloat(formData.lifespan),
       funFacts: formData.funFacts.filter(fact => fact.trim() !== '')
     });
-    // Navigate to all animals page after submission
-    navigate('/all');
+    // Navigate to color-specific animals page after submission
+    navigate(`/${colorName}/all`);
   };
 
   const inputClassName = `w-full px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
@@ -128,6 +128,91 @@ function AddAnimalPage() {
       <div className="flex-1 flex justify-center">
         <form onSubmit={handleSubmit} className="w-full max-w-6xl space-y-8">
           
+          {/* Image Upload - Top Section */}
+          <div className="flex justify-center">
+            <div>
+              <label className="block text-white text-lg font-medium mb-4 text-center">Animal Image</label>
+              <div className="flex flex-col items-center space-y-4">
+                {/* Image Preview Circle */}
+                <div 
+                  className="w-56 h-56 rounded-full border-4 cursor-pointer
+                             transition-all duration-300 ease-out
+                             hover:scale-105 hover:shadow-lg
+                             flex items-center justify-center overflow-hidden
+                             relative group"
+                  style={{
+                    backgroundColor: `${currentColor.primary}10`,
+                    borderColor: `${currentColor.primary}60`,
+                    boxShadow: `0 0 20px ${currentColor.primary}30`
+                  }}
+                >
+                  <input
+                    type="file"
+                    name="image"
+                    onChange={handleImageChange}
+                    required
+                    accept="image/*"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  
+                  {formData.image ? (
+                    <img 
+                      src={URL.createObjectURL(formData.image)}
+                      alt="Animal preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center p-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-8 h-8 mb-2" style={{ color: currentColor.primary }}>
+                        <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25v9.5A2.25 2.25 0 0116.75 17H3.25A2.25 2.25 0 011 14.75v-9.5zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 00.75-.75v-2.69l-2.22-2.219a.75.75 0 00-1.06 0l-1.91 1.909.47.47a.75.75 0 11-1.06 1.06L6.53 8.091a.75.75 0 00-1.06 0l-2.97 2.97z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-xs font-medium opacity-80" style={{ color: currentColor.primary }}>
+                        Click to upload
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">
+                      {formData.image ? 'Change Image' : 'Upload Image'}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* File name display */}
+                {formData.image && (
+                  <span className="text-white text-sm opacity-80 text-center max-w-full truncate">
+                    {formData.image.name}
+                  </span>
+                )}
+
+                {/* Lifespan Input - Under Image */}
+                <div className="flex items-center justify-center space-x-3 mt-6">
+                  <span className="text-white text-lg font-medium">Lives up to</span>
+                  <input
+                    type="number"
+                    name="lifespan"
+                    value={formData.lifespan}
+                    onChange={handleInputChange}
+                    required
+                    step="0.1"
+                    min="0"
+                    className="bg-transparent text-white text-2xl font-bold text-center outline-none border-none
+                               w-16 focus:outline-none focus:ring-0 focus:border-none
+                               [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ 
+                      color: currentColor.primary,
+                      caretColor: currentColor.primary
+                    }}
+                    placeholder="0"
+                  />
+                  <span className="text-white text-lg font-medium">years</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Basic Information Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Name */}
@@ -194,86 +279,24 @@ function AddAnimalPage() {
             </div>
           </div>
 
-          {/* Lifespan and Image Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Lifespan */}
-            <div>
-              <label className="block text-white text-lg font-medium mb-2">Lifespan (years)</label>
-              <input
-                type="number"
-                name="lifespan"
-                value={formData.lifespan}
-                onChange={handleInputChange}
-                required
-                step="0.1"
-                min="0"
-                className={inputClassName}
-                style={inputStyle}
-                placeholder="e.g., 3.5"
-              />
-            </div>
-
-            {/* Image Upload */}
-            <div>
-              <label className="block text-white text-lg font-medium mb-2">Animal Image</label>
-              <div className="flex flex-col items-center space-y-4">
-                {/* Image Preview Circle */}
-                <div 
-                  className="w-56 h-56 rounded-full border-4 cursor-pointer
-                             transition-all duration-300 ease-out
-                             hover:scale-105 hover:shadow-lg
-                             flex items-center justify-center overflow-hidden
-                             relative group"
-                  style={{
-                    backgroundColor: `${currentColor.primary}10`,
-                    borderColor: `${currentColor.primary}60`,
-                    boxShadow: `0 0 20px ${currentColor.primary}30`
-                  }}
-                >
-                  <input
-                    type="file"
-                    name="image"
-                    onChange={handleImageChange}
-                    required
-                    accept="image/*"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  />
-                  
-                  {formData.image ? (
-                    <img 
-                      src={URL.createObjectURL(formData.image)}
-                      alt="Animal preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center text-center p-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-8 h-8 mb-2" style={{ color: currentColor.primary }}>
-                        <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25v9.5A2.25 2.25 0 0116.75 17H3.25A2.25 2.25 0 011 14.75v-9.5zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 00.75-.75v-2.69l-2.22-2.219a.75.75 0 00-1.06 0l-1.91 1.909.47.47a.75.75 0 11-1.06 1.06L6.53 8.091a.75.75 0 00-1.06 0l-2.97 2.97z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-xs font-medium opacity-80" style={{ color: currentColor.primary }}>
-                        Click to upload
-                      </span>
-                    </div>
-                  )}
-                  
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">
-                      {formData.image ? 'Change Image' : 'Upload Image'}
-                    </span>
-                  </div>
-                </div>
-                
-                {/* File name display */}
-                {formData.image && (
-                  <span className="text-white text-sm opacity-80 text-center max-w-full truncate">
-                    {formData.image.name}
-                  </span>
-                )}
-              </div>
-            </div>
+          {/* Description Section */}
+          <div>
+            <label className="block text-white text-lg font-medium mb-2">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              required
+              rows={4}
+              className="w-full px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
+                         border-2 border-slate-700/80 rounded-2xl
+                         focus:outline-none focus:ring-2 focus:border-2
+                         transition-all duration-300 ease-in-out text-lg
+                         shadow-lg shadow-black/20 resize-none"
+              style={inputStyle}
+              placeholder="Describe the animal's characteristics, behavior, and notable features..."
+            />
           </div>
-
 
           {/* Fun Facts Section */}
           <div>
