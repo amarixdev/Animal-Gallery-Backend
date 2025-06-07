@@ -3,7 +3,7 @@ import type { Animal } from "../types/Animal";
 export const staticAnimals: Animal[] = [
     // Red
     {
-        id: 1,
+        animalId: 1,
         color: 'red',
         name: 'Red Fox',
         scientificName: 'Vulpes vulpes',
@@ -15,7 +15,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'red/red-fox.png'
     },
     {
-        id: 2,
+        animalId: 2,
         color: 'red',
         name: 'Scarlet Macaw',
         scientificName: 'Ara macao',
@@ -27,7 +27,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'red/scarlet-macaw.png'
     },
     {
-        id: 3,
+        animalId: 3,
         color: 'red',
         name: 'Red Panda',
         scientificName: 'Ailurus fulgens',
@@ -41,7 +41,7 @@ export const staticAnimals: Animal[] = [
 
     // Orange
     {
-        id: 4,
+        animalId: 4,
         color: 'orange',
         name: 'Clownfish',
         scientificName: 'Amphiprioninae',
@@ -53,7 +53,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'orange/clownfish.png'
     },
     {
-        id: 5,
+        animalId: 5,
         color: 'orange',
         name: 'Orangutan',
         scientificName: 'Pongo pygmaeus',
@@ -65,7 +65,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'orange/orangutan.png'
     },
     {
-        id: 6,
+        animalId: 6,
         color: 'orange',
         name: 'Tiger',
         scientificName: 'Panthera tigris',
@@ -79,7 +79,7 @@ export const staticAnimals: Animal[] = [
 
     // Yellow
     {
-        id: 7,
+        animalId: 7,
         color: 'yellow',
         name: 'Yellow Tang',
         scientificName: 'Zebrasoma flavescens',
@@ -91,7 +91,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'yellow/yellow-tang.png'
     },
     {
-        id: 8,
+        animalId: 8,
         color: 'yellow',
         name: 'Golden Lion Tamarin',
         scientificName: 'Leontopithecus rosalia',
@@ -103,7 +103,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'yellow/golden-tamarin.png'
     },
     {
-        id: 9,
+        animalId: 9,
         color: 'yellow',
         name: 'American Goldfinch',
         scientificName: 'Spinus tristis',
@@ -117,7 +117,7 @@ export const staticAnimals: Animal[] = [
 
     // Green
     {
-        id: 10,
+        animalId: 10,
         color: 'green',
         name: 'Green Tree Python',
         scientificName: 'Morelia viridis',
@@ -129,7 +129,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'green/python.png'
     },
     {
-        id: 11,
+        animalId: 11,
         color: 'green',
         name: 'Green Iguana',
         scientificName: 'Iguana iguana',
@@ -141,7 +141,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'green/iguana.png'
     },
     {
-        id: 12,
+        animalId: 12,
         color: 'green',
         name: 'Leaf Insect',
         scientificName: 'Phylliidae',
@@ -156,7 +156,7 @@ export const staticAnimals: Animal[] = [
 
     // Blue
     {
-        id: 13,
+        animalId: 13,
         color: 'blue',
         name: 'Blue Poison Dart Frog',
         scientificName: 'Dendrobates tinctorius',
@@ -168,7 +168,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'blue/blue-dart-frog.png'
     },
     {
-        id: 14,
+        animalId: 14,
         color: 'blue',
         name: 'Blue Jay',
         scientificName: 'Cyanocitta cristata',
@@ -180,7 +180,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'blue/blue-jay.png'
     },
     {
-        id: 15,
+        animalId: 15,
         color: 'blue',
         name: 'Mandarinfish',
         scientificName: 'Synchiropus splendidus',
@@ -194,7 +194,7 @@ export const staticAnimals: Animal[] = [
 
     // Indigo
     {
-        id: 16,
+        animalId: 16,
         color: 'indigo',
         name: 'Indigo Bunting',
         scientificName: 'Passerina cyanea',
@@ -206,7 +206,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'indigo/indigo-bunting.png'
     },
     {
-        id: 17,
+        animalId: 17,
         color: 'indigo',
         name: 'Purple Sea Urchin',
         scientificName: 'Strongylocentrotus purpuratus',
@@ -218,7 +218,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'indigo/sea-urchin.png'
     },
     {
-        id: 18,
+        animalId: 18,
         color: 'indigo',
         name: 'Blue Dragon (Sea Slug)',
         scientificName: 'Glaucus atlanticus',
@@ -232,7 +232,7 @@ export const staticAnimals: Animal[] = [
 
     // Violet
     {
-        id: 19,
+        animalId: 19,
         color: 'violet',
         name: 'Violet-backed Starling',
         scientificName: 'Cinnyricinclus leucogaster',
@@ -244,7 +244,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'violet/violet-starling.png'
     },
     {
-        id: 20,
+        animalId: 20,
         color: 'violet',
         name: 'Purple Fiddler Crab',
         scientificName: 'Uca purpurea',
@@ -257,7 +257,7 @@ export const staticAnimals: Animal[] = [
     }
     ,
     {
-        id: 21,
+        animalId: 21,
         color: 'violet',
         name: 'Mexican Violet Tarantula',
         scientificName: 'Cyriopagopus lividus',
@@ -271,7 +271,7 @@ export const staticAnimals: Animal[] = [
 
     // White
     {
-        id: 22,
+        animalId: 22,
         color: 'white',
         name: 'Snowy Owl',
         scientificName: 'Bubo scandiacus',
@@ -283,7 +283,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'white/snowy-owl.png'
     },
     {
-        id: 23,
+        animalId: 23,
         color: 'white',
         name: 'Arctic Fox',
         scientificName: 'Vulpes lagopus',
@@ -295,7 +295,7 @@ export const staticAnimals: Animal[] = [
         imageUrl: 'white/arctic-fox.png'
     },
     {
-        id: 24,
+        animalId: 24,
         color: 'white',
         name: 'Beluga Whale',
         scientificName: 'Delphinapterus leucas',

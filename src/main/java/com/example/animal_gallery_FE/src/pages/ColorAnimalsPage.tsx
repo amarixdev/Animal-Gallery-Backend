@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { type Animal } from '../types/Animal';
 import { staticAnimals } from '../data/static-animals';
+import { API_BASE_URL } from '../util/BASEURL';
 
 
-const API_BASE_URL = 'http://localhost:8080';
+
 
 function ColorAnimalsPage() {
   const navigate = useNavigate();
@@ -12,22 +13,49 @@ function ColorAnimalsPage() {
   const [animals, setAnimals] = useState<Animal[]>([]);
 
   useEffect(() => {
-    // First set static animals for this color
-    const staticColorAnimals = staticAnimals.filter((animal: Animal) => animal.color === colorName);
-    setAnimals(staticColorAnimals);
-    
-    // Then fetch and append API data
+    // This flag is used to prevent state updates after the component has unmounted,
+    // which is a scenario that can happen in React's StrictMode or with fast navigation.
+    let isCancelled = false;
+
     const fetchAnimals = async () => {
+      console.log("Fetching animals for:", colorName);
       if (!colorName) return;
+
+      // Start with the static animals for the given color
+      const staticColorAnimals = staticAnimals.filter((animal: Animal) => animal.color === colorName);
+
       try {
         const response = await fetch(`${API_BASE_URL}/${colorName}/all`);
-        const data = await response.json();
-        setAnimals(prevAnimals => [...prevAnimals, ...data]);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const fetchedAnimals: Animal[] = await response.json();
+        
+        if (!isCancelled) {
+          // Combine static and fetched animals.
+          // Using a Map ensures that there are no duplicates if an animal exists in both static and fetched data.
+          const allAnimalsMap = new Map();
+          staticColorAnimals.forEach(animal => allAnimalsMap.set(animal.animalId, animal));
+          fetchedAnimals.forEach((animal: Animal) => allAnimalsMap.set(animal.animalId, animal));
+
+          setAnimals(Array.from(allAnimalsMap.values()));
+          console.log("Animals: ", allAnimalsMap.values())
+        }
       } catch (error) {
         console.error('Error fetching animals:', error);
+        if (!isCancelled) {
+          // If the fetch fails, we at least have the static animals to show.
+          setAnimals(staticColorAnimals);
+        }
       }
     };
+
     fetchAnimals();
+
+    // The cleanup function will run when the component unmounts or before the effect runs again.
+    return () => {
+      isCancelled = true;
+    };
   }, [colorName]);
 
   // Color mapping for dynamic theming
@@ -123,10 +151,10 @@ function ColorAnimalsPage() {
       <div className="flex-1">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-x-6 gap-y-10 max-w-7xl mx-auto">
           {animals.map((animal) => (
-            <div key={animal.id} className="flex flex-col items-center space-y-2 group">
+            <div key={animal.animalId} className="flex flex-col items-center space-y-2 group">
               {/* Animal Circle */}
               <Link
-                to={`/${colorName}/${animal.id}`}
+                to={`/${colorName}/${animal.animalId}`}
                 className="w-24 h-24 rounded-full border-4 cursor-pointer
                            transition-all duration-300 ease-out
                            hover:scale-110 hover:shadow-lg

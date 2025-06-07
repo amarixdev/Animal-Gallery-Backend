@@ -1,9 +1,81 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import type { Animal, AnimalModel } from '../types/Animal';
+import { API_BASE_URL } from '../util/BASEURL';
 
-function AddAnimalPage() {
+function CreateAnimalPage() {
   const { colorName } = useParams<{ colorName: string }>();
   const navigate = useNavigate();
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+ // Form state
+ const [formData, setFormData] = useState({
+  name: '',
+   scientificName: '',
+  color: colorName,
+  habitat: '',
+  description: '',
+  diet: '',
+  lifespan: '',
+  image: '',
+  funFacts: ['']
+});
+
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const animalData:AnimalModel = {
+      name: formData.name,
+      scientificName: formData.scientificName,
+      habitat: formData.habitat,
+      color: colorName || '',
+      imageUrl: formData.image || '',
+      description: formData.description,
+      diet: formData.diet,
+      lifespan: parseFloat(formData.lifespan),
+      funFacts: formData.funFacts.filter(fact => fact.trim() !== '')
+    };
+    try {
+      const response = await fetch(`${API_BASE_URL}/${colorName}/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(animalData)
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit animal data');
+      }
+      const result = await response.json();
+      console.log('Animal data submitted successfully:', result);
+      navigate(`/${colorName}/all`);
+    } catch (error) {
+      console.error('Error submitting animal data:', error);
+    }
+  };
+//Upload image to server
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedImage(file);
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch(`${API_BASE_URL}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+      const result = await response.json();
+      console.log('Image uploaded successfully:', result);
+      setFormData(prev => ({
+        ...prev,
+        image: result.url
+      }));
+    }
+  };
+
+
 
   // Color mapping for dynamic theming
   const colorMap: { [key: string]: { primary: string; subtle: string } } = {
@@ -20,18 +92,7 @@ function AddAnimalPage() {
   const defaultColor = { primary: '#8b5cf6', subtle: '#2e1e4e' };
   const currentColor = colorMap[colorName?.toLowerCase() || ''] || defaultColor;
 
-  // Form state
-  const [formData, setFormData] = useState({
-    name: '',
-    scientificName: '',
-    habitat: '',
-    description: '',
-    diet: '',
-    lifespan: '',
-    image: null as File | null,
-    funFacts: ['']
-  });
-
+ 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -40,13 +101,6 @@ function AddAnimalPage() {
     }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({
-      ...prev,
-      image: file
-    }));
-  };
 
   const handleFunFactChange = (index: number, value: string) => {
     const newFunFacts = [...formData.funFacts];
@@ -74,18 +128,7 @@ function AddAnimalPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Submit to backend
-    console.log('Submitting animal data:', {
-      ...formData,
-      color: colorName,
-      lifespan: parseFloat(formData.lifespan),
-      funFacts: formData.funFacts.filter(fact => fact.trim() !== '')
-    });
-    // Navigate to color-specific animals page after submission
-    navigate(`/${colorName}/all`);
-  };
+
 
   const inputClassName = `w-full px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
                           border-2 border-slate-700/80 rounded-full
@@ -166,15 +209,15 @@ function AddAnimalPage() {
                   <input
                     type="file"
                     name="image"
-                    onChange={handleImageChange}
+                    onChange={handleImageUpload}
                     required
                     accept="image/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
                   
-                  {formData.image ? (
+                  {uploadedImage ? (
                     <img 
-                      src={URL.createObjectURL(formData.image)}
+                      src={URL.createObjectURL(uploadedImage)}
                       alt="Animal preview"
                       className="w-full h-full object-cover"
                     />
@@ -200,7 +243,7 @@ function AddAnimalPage() {
                 {/* File name display */}
                 {formData.image && (
                   <span className="text-white text-sm opacity-80 text-center max-w-full truncate">
-                    {formData.image.name}
+                    {formData.image}
                   </span>
                 )}
 
@@ -337,8 +380,8 @@ function AddAnimalPage() {
                     <button
                       type="button"
                       onClick={() => removeFunFact(index)}
-                      className="px-4 py-4 bg-red-500/20 text-red-400 border-2 border-red-500/60 rounded-full
-                                 hover:bg-red-500/30 transition-all duration-300 flex-shrink-0"
+                      className={`px-4 py-4 bg-red-500/20 text-red-400 border-2 border-red-500/60 rounded-full
+                                 hover:bg-red-500/30 transition-all duration-300 flex-shrink-0`}
                     >
                       ×
                     </button>
@@ -381,4 +424,4 @@ function AddAnimalPage() {
   );
 }
 
-export default AddAnimalPage; 
+export default CreateAnimalPage; 

@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import type { Animal } from '../types/Animal';
 import { useEffect, useState } from 'react';
 import { staticAnimals } from '../data/static-animals';
+import { API_BASE_URL, BASE_URL } from '../util/BASEURL';
 
 function AnimalDetailPage() {
   const navigate = useNavigate();
@@ -11,19 +12,21 @@ function AnimalDetailPage() {
   const [animal, setAnimal] = useState<Animal | null>(null);
 
 
-  const isStatic = animalId && parseInt(animalId) <= 24;
+  const isStatic = animalId && parseInt(animalId) <= staticAnimals.length; //[24]
   
   useEffect(() => {
+    console.log(isStatic)
     if (isStatic) {
-      const staticAnimal = staticAnimals.find((animal) => animal.id === parseInt(animalId));
+      const staticAnimal = staticAnimals.find((animal) => animal.animalId === parseInt(animalId));
       if (staticAnimal) {
         console.log(staticAnimal);
         setAnimal(staticAnimal);
       } 
     } else {
     const fetchAnimal = async () => {
-      const response = await fetch(`/${colorName}/${animalId}`);
+      const response = await fetch(`${API_BASE_URL}/${colorName}/${animalId}`);
       const data = await response.json();
+      console.log(data)
       setAnimal(data);
     };
     fetchAnimal();
@@ -118,7 +121,7 @@ function AnimalDetailPage() {
               >
                 {/* Placeholder for animal image */}
                 <div className="w-full h-full flex items-center justify-center">
-                  <img src={`/images/${animal?.imageUrl}`} alt={animal?.name} className="w-full h-full object-cover" />
+                  <img src={ isStatic ? `/images/${animal?.imageUrl}` : `${BASE_URL}${animal?.imageUrl}`} alt={animal?.name} className="w-full h-full object-cover" />
                 </div>
               </div>
 

@@ -2,8 +2,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { type Animal } from '../types/Animal';
 import { staticAnimals } from '../data/static-animals';
+import { API_BASE_URL } from '../util/BASEURL';
 
-const API_BASE_URL = 'http://localhost:8080';
 
 function ColorPage() {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ function ColorPage() {
         const response = await fetch(`${API_BASE_URL}/${colorName}`);
         const data = await response.json();
         setAnimals(prevAnimals => [...prevAnimals, ...data]);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching animals:', error);
       }
@@ -132,10 +131,10 @@ function ColorPage() {
         {/* Animals Grid */}
         <div className="flex gap-8 flex-wrap justify-center items-center">
           {animals.length > 0 ? (
-            animals.slice(0, 4).map((animal) => (
-              <div key={animal.id} className="flex flex-col items-center space-y-2 group">
+            animals.slice(0, 3).map((animal) => (
+              <div key={animal.animalId} className="flex flex-col items-center space-y-2 group">
                 <Link
-                  to={`/${colorName}/${animal.id}`}
+                  to={`/${colorName}/${animal.animalId}`}
                   className="w-32 h-32 rounded-full border-4 cursor-pointer
                              transition-all duration-300 ease-out
                              hover:scale-110 hover:shadow-lg
