@@ -7,17 +7,27 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "animals")
 public class Animal {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+        name = "animal_sequence",
+        sequenceName = "animal_sequence",
+        initialValue = 25,
+        allocationSize = 1
+    )
+    @GeneratedValue(
+        strategy = GenerationType.SEQUENCE,
+        generator = "animal_sequence"
+    )
     private Long animalId;
     @Column(nullable = false)
     private String imageUrl;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String color;
     @Column(unique = true, nullable = false)
     private String name;
