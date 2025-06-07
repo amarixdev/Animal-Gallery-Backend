@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import type { Animal } from '../types/Animal';
+import { type Animal } from '../types/Animal';
+import { staticAnimals } from '../data/static-animals';
 
 const API_BASE_URL = 'http://localhost:8080';
 
@@ -9,11 +10,14 @@ function ColorPage() {
   const [animals, setAnimals] = useState<Animal[]>([]);
 
   useEffect(() => {
+    setAnimals(staticAnimals.filter((animal: Animal) => animal.color === colorName));
+
     const fetchAnimals = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/${colorName}`);
         const data = await response.json();
-        setAnimals(data);
+        setAnimals(prevAnimals => [...prevAnimals, ...data]);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching animals:', error);
       }
@@ -111,23 +115,25 @@ function ColorPage() {
         <div className="flex gap-8 flex-wrap justify-center items-center">
           {animals.length > 0 ? (
             animals.slice(0, 4).map((animal) => (
-              <Link
-                key={animal.id}
-                to={`/${colorName}/${animal.id}`}
-                className="w-32 h-32 rounded-full border-4 cursor-pointer
-                           transition-all duration-300 ease-out
-                           hover:scale-110 hover:shadow-lg
-                           flex items-center justify-center"
-                style={{
-                  backgroundColor: `${currentColor.primary}20`,
-                  borderColor: `${currentColor.primary}60`,
-                  boxShadow: `0 0 20px ${currentColor.primary}30`
-                }}
-              >
-                <span className="text-sm font-bold opacity-60 text-center" style={{ color: currentColor.primary }}>
+              <div key={animal.id} className="flex flex-col items-center space-y-2 group">
+                <Link
+                  to={`/${colorName}/${animal.id}`}
+                  className="w-32 h-32 rounded-full border-4 cursor-pointer
+                             transition-all duration-300 ease-out
+                             hover:scale-110 hover:shadow-lg
+                             flex items-center justify-center overflow-hidden"
+                  style={{
+                    backgroundColor: `${currentColor.primary}20`,
+                    borderColor: `${currentColor.primary}60`,
+                    boxShadow: `0 0 20px ${currentColor.primary}30`,
+                  }}
+                >
+                  <img src={`/images/${animal.imageUrl}`} alt={animal.name} className="w-full h-full object-cover" />
+                </Link>
+                <span className="text-white text-sm font-medium opacity-80 text-center group-hover:opacity-100 transition-opacity duration-300">
                   {animal.name}
                 </span>
-              </Link>
+              </div>
             ))
           ) : (
             <div className="text-center text-white/60">

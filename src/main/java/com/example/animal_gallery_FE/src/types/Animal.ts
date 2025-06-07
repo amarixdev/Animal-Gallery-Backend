@@ -10,3 +10,4 @@ export type Animal = {
     lifespan: number;
     funFacts: string[];
 }
+
