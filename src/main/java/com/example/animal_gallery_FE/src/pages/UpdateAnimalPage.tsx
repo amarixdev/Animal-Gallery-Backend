@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import type { Animal, AnimalModel } from '../types/Animal';
+import { staticAnimals } from '../data/static-animals';
+import { API_BASE_URL, BASE_URL } from '../util/BASEURL';
 
 function UpdateAnimalPage() {
   const { colorName, animalId } = useParams<{ colorName: string; animalId: string }>();
   const navigate = useNavigate();
+
+  const [existingAnimal, setExistingAnimal] = useState<Animal | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  const isStatic = animalId && parseInt(animalId) <= staticAnimals.length;
 
   // Color mapping for dynamic theming
   const colorMap: { [key: string]: { primary: string; subtle: string } } = {
@@ -32,30 +40,65 @@ function UpdateAnimalPage() {
     funFacts: ['']
   });
 
-  // Load existing animal data (mock data - would come from backend)
+  // Load existing animal data
   useEffect(() => {
-    // Mock existing animal data - in real app this would be an API call
-    const existingAnimal = {
-      name: `${colorName} Cardinal`,
-      scientificName: 'Cardinalis cardinalis',
-      habitat: 'Forests, gardens, shrublands, and wetlands',
-      description: 'The cardinal is a vibrant songbird known for its distinctive crest and beautiful plumage. Males are brilliant red while females are warm brown with red tinges. They are non-migratory birds that remain in their territory year-round, making them a beloved sight in gardens and woodlands.',
-      diet: 'Seeds, insects, fruits, and small grains',
-      lifespan: '3.5',
-      funFacts: [
-        'Cardinals can live up to 15 years in the wild',
-        'They are the state bird of seven U.S. states',
-        'Cardinals mate for life and travel in pairs',
-        'They can crack even the toughest seeds with their strong beaks'
-      ]
+    const fetchAnimalData = async () => {
+      if (!animalId || !colorName) return;
+
+      try {
+        setLoading(true);
+
+        if (isStatic) {
+          // Check if it's a static animal that can't be updated
+          alert(`Static animals cannot be updated. Only user-created animals can be updated.`);
+          navigate(`/${colorName}/${animalId}`, { replace: true });
+          return;
+        }
+
+        // Fetch animal data from API
+        const response = await fetch(`${API_BASE_URL}/${colorName}/${animalId}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            console.log(`Animal with ID ${animalId} not found`);
+            navigate(`/${colorName}/all`, { replace: true });
+            return;
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const animalData: Animal = await response.json();
+        
+        if (!animalData) {
+          console.log(`No data returned for animal ID ${animalId}`);
+          navigate(`/${colorName}/all`, { replace: true });
+          return;
+        }
+
+        setExistingAnimal(animalData);
+
+        // Populate form with existing data
+        setFormData({
+          name: animalData.name,
+          scientificName: animalData.scientificName,
+          habitat: animalData.habitat,
+          description: animalData.description,
+          diet: animalData.diet,
+          lifespan: animalData.lifespan.toString(),
+          image: null, // User can upload a new image or keep existing one
+          funFacts: animalData.funFacts.length > 0 ? animalData.funFacts : ['']
+        });
+
+      } catch (error) {
+        console.error('Error fetching animal data:', error);
+        navigate(`/${colorName}/all`, { replace: true });
+      } finally {
+        setLoading(false);
+      }
     };
 
-    setFormData({
-      ...existingAnimal,
-      image: null, // User can upload a new image or keep existing one
-      funFacts: existingAnimal.funFacts.length > 0 ? existingAnimal.funFacts : ['']
-    });
-  }, [colorName, animalId]);
+    fetchAnimalData();
+  }, [colorName, animalId, navigate, isStatic]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -65,12 +108,30 @@ function UpdateAnimalPage() {
     }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({
-      ...prev,
-      image: file
-    }));
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await fetch(`${API_BASE_URL}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+        const result = await response.json();
+        console.log('Image uploaded successfully:', result);
+        setFormData(prev => ({
+          ...prev,
+          image: file
+        }));
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        alert('Failed to upload image. Please try again.');
+      }
+    }
   };
 
   const handleFunFactChange = (index: number, value: string) => {
@@ -99,18 +160,48 @@ function UpdateAnimalPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Submit update to backend
-    console.log('Updating animal data:', {
-      ...formData,
-      animalId: animalId,
-      color: colorName,
-      lifespan: parseFloat(formData.lifespan),
-      funFacts: formData.funFacts.filter(fact => fact.trim() !== '')
-    });
-    // Navigate back to animal detail page after update
-    navigate(`/${colorName}/${animalId}`);
+    
+    if (!animalId || !colorName || !existingAnimal) return;
+
+    try {
+      const animalData: AnimalModel = {
+        name: formData.name,
+        scientificName: formData.scientificName,
+        habitat: formData.habitat,
+        color: colorName,
+        imageUrl: formData.image ? formData.image.name : existingAnimal.imageUrl,
+        description: formData.description,
+        diet: formData.diet,
+        lifespan: parseFloat(formData.lifespan),
+        funFacts: formData.funFacts.filter(fact => fact.trim() !== '')
+      };
+
+      const response = await fetch(`${API_BASE_URL}/${colorName}/${animalId}/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(animalData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update animal data');
+      }
+
+      const result = await response.json();
+      console.log('Animal data updated successfully:', result);
+      
+      // Show success message
+      alert(`${formData.name} has been updated successfully!`);
+      
+      // Navigate back to animal detail page after update
+      navigate(`/${colorName}/${animalId}`, { replace: true });
+    } catch (error) {
+      console.error('Error updating animal data:', error);
+      alert('Failed to update animal. Please try again.');
+    }
   };
 
   const inputClassName = `w-full px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
@@ -123,6 +214,23 @@ function UpdateAnimalPage() {
     '--tw-ring-color': `${currentColor.primary}80`,
     borderColor: `${currentColor.primary}40`
   } as React.CSSProperties;
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div 
+        className="min-h-screen flex items-center justify-center p-8 transition-[background] duration-1000 ease-in-out"
+        style={{
+          background: `linear-gradient(to bottom right, ${currentColor.subtle}, #000, ${currentColor.subtle})`
+        }}
+      >
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">Loading...</h1>
+          <p className="text-white/80">Fetching animal data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -163,7 +271,7 @@ function UpdateAnimalPage() {
         <h1 className="text-6xl font-bold text-white uppercase tracking-widest
                        bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent
                        md:text-5xl sm:text-4xl">
-          Update {colorName} Animal
+          Update {existingAnimal?.name || 'Animal'}
         </h1>
       </div>
 
@@ -201,6 +309,12 @@ function UpdateAnimalPage() {
                     <img 
                       src={URL.createObjectURL(formData.image)}
                       alt="Animal preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : existingAnimal?.imageUrl ? (
+                    <img 
+                      src={`${BASE_URL}${existingAnimal.imageUrl}`}
+                      alt={existingAnimal.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
