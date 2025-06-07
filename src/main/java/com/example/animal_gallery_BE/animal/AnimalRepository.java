@@ -10,8 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
     
-    Animal findByColorIgnoreCase(String color);
     Animal findByNameIgnoreCase(String name);
+
+    List<Animal> findByColorIgnoreCase(String color);
 
     @Query(value = "SELECT * FROM animals WHERE lifespan >= ?1", nativeQuery = true)
     List<Animal> findByLifespan(Double lifespan);

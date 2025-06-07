@@ -15,7 +15,8 @@ public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long animalId;
-
+    @Column(nullable = false)
+    private String imageUrl;
     @Column(unique = true, nullable = false)
     private String color;
     @Column(unique = true, nullable = false)
@@ -54,6 +55,10 @@ public class Animal {
         return animalId;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public String getColor() {
         return color;
     }
@@ -88,6 +93,10 @@ public class Animal {
 
     public void setAnimalId(Long animalId) {
         this.animalId = animalId;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public void setColor(String color) {
