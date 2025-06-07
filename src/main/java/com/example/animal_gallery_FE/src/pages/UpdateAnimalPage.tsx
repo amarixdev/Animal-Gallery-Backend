@@ -197,7 +197,8 @@ function UpdateAnimalPage() {
       
       alert(`${formData.name} has been updated successfully!`);
       
-      navigate(`/${colorName}/${animalId}`, { replace: true });
+      // Navigate back to the previous page (AnimalDetailPage)
+      navigate(-1);
     } catch (error) {
       console.error('Error updating animal data:', error);
       alert('Failed to update animal. Please try again.');

@@ -169,10 +169,10 @@ function AnimalDetailPage() {
             <h1 className="text-6xl font-bold text-white uppercase tracking-widest
                            bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent
                            md:text-5xl sm:text-4xl mb-4">
-              {animal?.name}
+              {animal?.name || "Loading..."}
             </h1>
             <p className="text-2xl text-white/80 italic tracking-wide">
-              {animal?.scientificName}
+              {animal?.scientificName || "Loading..."}
             </p>
           </div>
 
