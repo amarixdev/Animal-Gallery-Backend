@@ -70,17 +70,42 @@ function AnimalDetailPage() {
       if (staticAnimal) {
         console.log(staticAnimal);
         setAnimal(staticAnimal);
-      } 
+      } else {
+        // Static animal not found, redirect to color animals page
+        console.log(`Static animal with ID ${animalId} not found`);
+        navigate(`/${colorName}/all`, { replace: true });
+      }
     } else {
-    const fetchAnimal = async () => {
-      const response = await fetch(`${API_BASE_URL}/${colorName}/${animalId}`);
-      const data = await response.json();
-      console.log(data)
-      setAnimal(data);
-    };
-    fetchAnimal();
-  }
-  }, []);
+      const fetchAnimal = async () => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/${colorName}/${animalId}`);
+          if (!response.ok) {
+            if (response.status === 404) {
+              // Animal not found, redirect to color animals page
+              console.log(`Animal with ID ${animalId} not found`);
+              navigate(`/${colorName}/all`, { replace: true });
+              return;
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log(data);
+          if (data) {
+            setAnimal(data);
+          } else {
+            // No animal data returned, redirect to color animals page
+            console.log(`No data returned for animal ID ${animalId}`);
+            navigate(`/${colorName}/all`, { replace: true });
+          }
+        } catch (error) {
+          console.error('Error fetching animal:', error);
+          // On any fetch error, redirect to color animals page
+          navigate(`/${colorName}/all`, { replace: true });
+        }
+      };
+      fetchAnimal();
+    }
+  }, [animalId, colorName, navigate, isStatic]);
 
 
 
