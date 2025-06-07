@@ -10,6 +10,7 @@ function UpdateAnimalPage() {
 
   const [existingAnimal, setExistingAnimal] = useState<Animal | null>(null);
   const [loading, setLoading] = useState(true);
+  const [newImageUrl, setNewImageUrl] = useState<string | null>(null);
   
   const isStatic = animalId && parseInt(animalId) <= staticAnimals.length;
 
@@ -127,6 +128,7 @@ function UpdateAnimalPage() {
           ...prev,
           image: file
         }));
+        setNewImageUrl(result.url);
       } catch (error) {
         console.error('Error uploading image:', error);
         alert('Failed to upload image. Please try again.');
@@ -171,7 +173,7 @@ function UpdateAnimalPage() {
         scientificName: formData.scientificName,
         habitat: formData.habitat,
         color: colorName,
-        imageUrl: formData.image ? formData.image.name : existingAnimal.imageUrl,
+        imageUrl: newImageUrl || existingAnimal.imageUrl,
         description: formData.description,
         diet: formData.diet,
         lifespan: parseFloat(formData.lifespan),
@@ -193,10 +195,8 @@ function UpdateAnimalPage() {
       const result = await response.json();
       console.log('Animal data updated successfully:', result);
       
-      // Show success message
       alert(`${formData.name} has been updated successfully!`);
       
-      // Navigate back to animal detail page after update
       navigate(`/${colorName}/${animalId}`, { replace: true });
     } catch (error) {
       console.error('Error updating animal data:', error);
