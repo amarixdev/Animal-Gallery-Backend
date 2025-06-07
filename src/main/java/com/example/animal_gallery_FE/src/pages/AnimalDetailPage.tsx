@@ -14,6 +14,55 @@ function AnimalDetailPage() {
 
   const isStatic = animalId && parseInt(animalId) <= staticAnimals.length; //[24]
   
+  const handleDelete = async () => {
+    if (!animalId || !colorName) return;
+    
+    // Check if it's a static animal that can't be deleted
+    if (isStatic) {
+      alert(`${animal?.name} is a static animal and cannot be deleted. Only user-created animals can be deleted.`);
+      return;
+    }
+    
+    // Show confirmation dialog for non-static animals
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${animal?.name}? This action cannot be undone.`
+    );
+    
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/${colorName}/${animalId}/delete`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete animal');
+      }
+
+      // Show success message
+      alert(`${animal?.name} has been deleted successfully.`);
+      
+      // Navigate back to the color animals page
+      navigate(`/${colorName}/all`);
+    } catch (error) {
+      console.error('Error deleting animal:', error);
+      alert('Failed to delete animal. Please try again.');
+    }
+  };
+
+  const handleUpdate = () => {
+    if (!animalId || !colorName) return;
+    
+    // Check if it's a static animal that can't be updated
+    if (isStatic) {
+      alert(`${animal?.name} is a static animal and cannot be updated. Only user-created animals can be updated.`);
+      return;
+    }
+    
+    // Navigate to update page for non-static animals
+    navigate(`/${colorName}/${animalId}/update`);
+  };
+  
   useEffect(() => {
     console.log(isStatic)
     if (isStatic) {
@@ -232,23 +281,22 @@ function AnimalDetailPage() {
       </div>
       <div className="absolute top-8 right-8 flex justify-center space-x-6" >
       <button 
-
-className=" cursor-pointer px-6 py-3 bg-red-400/20 text-white rounded-full border-2 border-slate-700/80
-           hover:bg-red-700/50 hover:border-slate-600/80 transition-all duration-300
-           text-lg font-medium tracking-wide shadow-lg shadow-black/20"
->
-Delete
-</button>
-<Link 
-        to={`/${colorName}/${animalId}/update`}
-        className=" px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+        onClick={handleDelete}
+        className="cursor-pointer px-6 py-3 bg-red-400/20 text-white rounded-full border-2 border-slate-700/80
+                   hover:bg-red-700/50 hover:border-slate-600/80 transition-all duration-300
+                   text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+      >
+        Delete
+      </button>
+      <button 
+        onClick={handleUpdate}
+        className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
                    hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
                    text-lg font-medium tracking-wide shadow-lg shadow-black/20"
       >
        Update
-      </Link>
-    
-</div>
+      </button>
+    </div>
   
     </div>
   );

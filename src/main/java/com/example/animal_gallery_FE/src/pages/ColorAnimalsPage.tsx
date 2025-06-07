@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { type Animal } from '../types/Animal';
 import { staticAnimals } from '../data/static-animals';
-import { API_BASE_URL } from '../util/BASEURL';
+import { API_BASE_URL, BASE_URL } from '../util/BASEURL';
 
 
 
@@ -165,7 +165,7 @@ function ColorAnimalsPage() {
                   boxShadow: `0 0 20px ${currentColor.primary}30`,
                 }}
               >
-                <img src={`/images/${animal.imageUrl}`} alt={animal.name} className="w-full h-full object-cover" />
+                <img src={ animal.animalId <= 24 ? `/images/${animal.imageUrl}` : `${BASE_URL}${animal.imageUrl}`} alt={animal.name} className="w-full h-full object-cover" />
               </Link>
 
               {/* Animal Name */}
