@@ -5,6 +5,7 @@ import AddAnimalPage from './pages/AddAnimalPage';
 import AllAnimalsPage from './pages/AllAnimalsPage';
 import ColorAnimalsPage from './pages/ColorAnimalsPage';
 import AnimalDetailPage from './pages/AnimalDetailPage';
+import UpdateAnimalPage from './pages/UpdateAnimalPage';
 import './App.css';
 
 function App() {
@@ -14,8 +15,9 @@ function App() {
       <Route path="/all" element={<AllAnimalsPage />} />
       <Route path="/:colorName" element={<ColorPage />} />
       <Route path="/:colorName/all" element={<ColorAnimalsPage />} />
-      <Route path="/:colorName/create" element={<AddAnimalPage />} />
-      <Route path="/:colorName/:animalId" element={<AnimalDetailPage />} />
+      <Route path="/:colorName/create" element={<AddAnimalPage />} /> //POST
+      <Route path="/:colorName/:animalId" element={<AnimalDetailPage />} /> //GET
+      <Route path="/:colorName/:animalId/update" element={<UpdateAnimalPage />} /> //PUT
     </Routes>
   );
 }

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
-function AddAnimalPage() {
-  const { colorName } = useParams<{ colorName: string }>();
+function UpdateAnimalPage() {
+  const { colorName, animalId } = useParams<{ colorName: string; animalId: string }>();
   const navigate = useNavigate();
 
   // Color mapping for dynamic theming
@@ -20,7 +20,7 @@ function AddAnimalPage() {
   const defaultColor = { primary: '#8b5cf6', subtle: '#2e1e4e' };
   const currentColor = colorMap[colorName?.toLowerCase() || ''] || defaultColor;
 
-  // Form state
+  // Form state - will be populated with existing data
   const [formData, setFormData] = useState({
     name: '',
     scientificName: '',
@@ -31,6 +31,31 @@ function AddAnimalPage() {
     image: null as File | null,
     funFacts: ['']
   });
+
+  // Load existing animal data (mock data - would come from backend)
+  useEffect(() => {
+    // Mock existing animal data - in real app this would be an API call
+    const existingAnimal = {
+      name: `${colorName} Cardinal`,
+      scientificName: 'Cardinalis cardinalis',
+      habitat: 'Forests, gardens, shrublands, and wetlands',
+      description: 'The cardinal is a vibrant songbird known for its distinctive crest and beautiful plumage. Males are brilliant red while females are warm brown with red tinges. They are non-migratory birds that remain in their territory year-round, making them a beloved sight in gardens and woodlands.',
+      diet: 'Seeds, insects, fruits, and small grains',
+      lifespan: '3.5',
+      funFacts: [
+        'Cardinals can live up to 15 years in the wild',
+        'They are the state bird of seven U.S. states',
+        'Cardinals mate for life and travel in pairs',
+        'They can crack even the toughest seeds with their strong beaks'
+      ]
+    };
+
+    setFormData({
+      ...existingAnimal,
+      image: null, // User can upload a new image or keep existing one
+      funFacts: existingAnimal.funFacts.length > 0 ? existingAnimal.funFacts : ['']
+    });
+  }, [colorName, animalId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -76,15 +101,16 @@ function AddAnimalPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Submit to backend
-    console.log('Submitting animal data:', {
+    // TODO: Submit update to backend
+    console.log('Updating animal data:', {
       ...formData,
+      animalId: animalId,
       color: colorName,
       lifespan: parseFloat(formData.lifespan),
       funFacts: formData.funFacts.filter(fact => fact.trim() !== '')
     });
-    // Navigate to color-specific animals page after submission
-    navigate(`/${colorName}/all`);
+    // Navigate back to animal detail page after update
+    navigate(`/${colorName}/${animalId}`);
   };
 
   const inputClassName = `w-full px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
@@ -107,12 +133,12 @@ function AddAnimalPage() {
     >
       {/* Back Button - Top Left */}
       <Link 
-        to={`/${colorName}`}
+        to={`/${colorName}/${animalId}`}
         className="absolute top-8 left-8 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
                    hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
                    text-lg font-medium tracking-wide shadow-lg shadow-black/20"
       >
-        ← Back to {colorName}
+        ← Back to Animal
       </Link>
 
       {/* Header Section */}
@@ -120,7 +146,7 @@ function AddAnimalPage() {
         <h1 className="text-6xl font-bold text-white uppercase tracking-widest
                        bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent
                        md:text-5xl sm:text-4xl">
-          Create {colorName} Animal
+          Update {colorName} Animal
         </h1>
       </div>
 
@@ -150,7 +176,6 @@ function AddAnimalPage() {
                     type="file"
                     name="image"
                     onChange={handleImageChange}
-                    required
                     accept="image/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
@@ -167,7 +192,7 @@ function AddAnimalPage() {
                         <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25v9.5A2.25 2.25 0 0116.75 17H3.25A2.25 2.25 0 011 14.75v-9.5zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 00.75-.75v-2.69l-2.22-2.219a.75.75 0 00-1.06 0l-1.91 1.909.47.47a.75.75 0 11-1.06 1.06L6.53 8.091a.75.75 0 00-1.06 0l-2.97 2.97z" clipRule="evenodd" />
                       </svg>
                       <span className="text-xs font-medium opacity-80" style={{ color: currentColor.primary }}>
-                        Click to upload
+                        Click to change image
                       </span>
                     </div>
                   )}
@@ -175,7 +200,7 @@ function AddAnimalPage() {
                   {/* Hover overlay */}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
-                      {formData.image ? 'Change Image' : 'Upload Image'}
+                      {formData.image ? 'Change Image' : 'Upload New Image'}
                     </span>
                   </div>
                 </div>
@@ -355,7 +380,7 @@ function AddAnimalPage() {
                 color: currentColor.primary
               }}
             >
-              Add Animal
+              Update Animal
             </button>
           </div>
         </form>
@@ -364,4 +389,4 @@ function AddAnimalPage() {
   );
 }
 
-export default AddAnimalPage; 
+export default UpdateAnimalPage; 

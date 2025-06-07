@@ -83,7 +83,7 @@ function ColorPage() {
             color: currentColor.primary
           }}
         >
-          + Add a New Animal
+          + Create a New Animal
         </Link>
 
         {/* Animals Grid */}

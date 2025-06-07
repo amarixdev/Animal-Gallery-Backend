@@ -214,16 +214,13 @@ function AnimalDetailPage() {
 
           {/* Action Buttons */}
           <div className="flex justify-center space-x-6 mt-12">
+
             <Link
               to={`/${colorName}/all`}
               className="px-8 py-4 text-xl font-bold text-white rounded-full border-2
                          transition-all duration-300 ease-out
-                         hover:scale-105 hover:shadow-lg uppercase tracking-wider inline-block"
-              style={{
-                backgroundColor: `${currentColor.primary}30`,
-                borderColor: currentColor.primary,
-                color: currentColor.primary
-              }}
+                         hover:scale-105 hover:shadow-lg uppercase tracking-wider inline-block
+                         bg-slate-800/50 border-slate-700/80 hover:bg-slate-700/50 hover:border-slate-600/80"
             >
               View All {colorName} Animals
             </Link>
@@ -240,6 +237,26 @@ function AnimalDetailPage() {
           </div>
         </div>
       </div>
+      <div className="absolute top-8 right-8 flex justify-center space-x-6" >
+      <button 
+
+className=" cursor-pointer px-6 py-3 bg-red-400/20 text-white rounded-full border-2 border-slate-700/80
+           hover:bg-red-700/50 hover:border-slate-600/80 transition-all duration-300
+           text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+>
+Delete
+</button>
+<Link 
+        to={`/${colorName}/${animalId}/update`}
+        className=" px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                   hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                   text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+      >
+       Update
+      </Link>
+    
+</div>
+  
     </div>
   );
 }

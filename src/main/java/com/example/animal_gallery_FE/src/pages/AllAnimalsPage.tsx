@@ -121,7 +121,7 @@ function AllAnimalsPage() {
                        hover:scale-105 hover:shadow-lg uppercase tracking-wider inline-block
                        bg-purple-500/20 border-purple-500 text-purple-400"
           >
-            + Add New Animal
+            + Create New Animal
           </Link>
         </div>
       </div>

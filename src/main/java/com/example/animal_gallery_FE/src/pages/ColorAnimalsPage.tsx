@@ -126,7 +126,7 @@ function ColorAnimalsPage() {
               color: currentColor.primary
             }}
           >
-            + Add {colorName} Animal
+            + Create {colorName} Animal
           </Link>
 
           {/* View All Colors Button */}
