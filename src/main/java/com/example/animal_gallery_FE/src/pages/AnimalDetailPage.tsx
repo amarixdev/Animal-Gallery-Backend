@@ -1,7 +1,36 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import type { Animal } from '../types/Animal';
+import { useEffect, useState } from 'react';
+import { staticAnimals } from '../data/static-animals';
 
 function AnimalDetailPage() {
+  const navigate = useNavigate();
+  
+
   const { colorName, animalId } = useParams<{ colorName: string; animalId: string }>();
+  const [animal, setAnimal] = useState<Animal | null>(null);
+
+
+  const isStatic = animalId && parseInt(animalId) <= 24;
+  
+  useEffect(() => {
+    if (isStatic) {
+      const staticAnimal = staticAnimals.find((animal) => animal.id === parseInt(animalId));
+      if (staticAnimal) {
+        console.log(staticAnimal);
+        setAnimal(staticAnimal);
+      } 
+    } else {
+    const fetchAnimal = async () => {
+      const response = await fetch(`/${colorName}/${animalId}`);
+      const data = await response.json();
+      setAnimal(data);
+    };
+    fetchAnimal();
+  }
+  }, []);
+
+
 
   // Color mapping for dynamic theming
   const colorMap: { [key: string]: { primary: string; subtle: string } } = {
@@ -18,24 +47,7 @@ function AnimalDetailPage() {
   const defaultColor = { primary: '#8b5cf6', subtle: '#2e1e4e' };
   const currentColor = colorMap[colorName?.toLowerCase() || ''] || defaultColor;
 
-  // Mock animal data - would come from backend API
-  const animal = {
-    animalId: animalId,
-    name: `${colorName} Cardinal`,
-    scientificName: 'Cardinalis cardinalis',
-    color: colorName?.toLowerCase() || 'red',
-    habitat: 'Forests, gardens, shrublands, and wetlands',
-    diet: 'Seeds, insects, fruits, and small grains',
-    lifespan: 3.5,
-    description: 'The cardinal is a vibrant songbird known for its distinctive crest and beautiful plumage. Males are brilliant red while females are warm brown with red tinges. They are non-migratory birds that remain in their territory year-round, making them a beloved sight in gardens and woodlands.',
-    funFacts: [
-      'Cardinals can live up to 15 years in the wild',
-      'They are the state bird of seven U.S. states',
-      'Cardinals mate for life and travel in pairs',
-      'They can crack even the toughest seeds with their strong beaks'
-    ],
-    imageUrl: '/api/placeholder/400/400' // Placeholder image URL
-  };
+
 
   return (
     <div 
@@ -44,15 +56,32 @@ function AnimalDetailPage() {
         background: `linear-gradient(to bottom right, ${currentColor.subtle}, #000, ${currentColor.subtle})`
       }}
     >
-      {/* Back Button - Top Left */}
-      <Link 
-        to={`/${colorName}/all`}
-        className="absolute top-8 left-8 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
-                   hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
-                   text-lg font-medium tracking-wide shadow-lg shadow-black/20"
-      >
-        ← Back to {colorName} Animals
-      </Link>
+      {/* Navigation Buttons - Top Left */}
+      <div className="relative mb-10 flex justify-between w-full">
+        <button 
+          onClick={() => navigate(-1)}
+          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          ← Back
+        </button>
+        <Link 
+          to="/"
+          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          🏠 Home
+        </Link>
+        <div 
+          className="opacity-0 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          🏠 Home
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 flex justify-center items-start mt-20">
@@ -63,10 +92,10 @@ function AnimalDetailPage() {
             <h1 className="text-6xl font-bold text-white uppercase tracking-widest
                            bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent
                            md:text-5xl sm:text-4xl mb-4">
-              {animal.name}
+              {animal?.name}
             </h1>
             <p className="text-2xl text-white/80 italic tracking-wide">
-              {animal.scientificName}
+              {animal?.scientificName}
             </p>
           </div>
 
@@ -89,16 +118,7 @@ function AnimalDetailPage() {
               >
                 {/* Placeholder for animal image */}
                 <div className="w-full h-full flex items-center justify-center">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    className="w-24 h-24"
-                    style={{ color: currentColor.primary }}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                  <img src={`/images/${animal?.imageUrl}`} alt={animal?.name} className="w-full h-full object-cover" />
                 </div>
               </div>
 
@@ -107,7 +127,7 @@ function AnimalDetailPage() {
                 <div className="bg-slate-800/50 rounded-2xl p-6 border-2 border-slate-700/80 text-center">
                   <h3 className="text-lg font-semibold text-white mb-3">Lifespan</h3>
                   <p className="text-3xl font-bold" style={{ color: currentColor.primary }}>
-                    {animal.lifespan} years
+                    {animal?.lifespan} years
                   </p>
                 </div>
                 
@@ -126,7 +146,7 @@ function AnimalDetailPage() {
                   Habitat
                 </h3>
                 <p className="text-white/90 text-lg leading-relaxed">
-                  {animal.habitat}
+                  {animal?.habitat}
                 </p>
               </div>
 
@@ -139,7 +159,7 @@ function AnimalDetailPage() {
                   Diet
                 </h3>
                 <p className="text-white/90 text-lg leading-relaxed">
-                  {animal.diet}
+                  {animal?.diet}
                 </p>
               </div>
 
@@ -149,35 +169,15 @@ function AnimalDetailPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6 mr-3" style={{ color: currentColor.primary }}>
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zM10 15a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                   </svg>
-                  Classification
+                  Description
                 </h3>
                 <div className="space-y-2">
                   <p className="text-white/90">
-                    <span className="text-white/70">Kingdom:</span> Animalia
-                  </p>
-                  <p className="text-white/90">
-                    <span className="text-white/70">Class:</span> Aves
-                  </p>
-                  <p className="text-white/90">
-                    <span className="text-white/70">Family:</span> Cardinalidae
+                    {animal?.description}
                   </p>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Description Section */}
-          <div className="bg-slate-800/50 rounded-2xl p-8 border-2 border-slate-700/80 mb-12">
-            <h3 className="text-2xl font-semibold text-white mb-6 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-7 h-7 mr-3" style={{ color: currentColor.primary }}>
-                <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clipRule="evenodd" />
-                <path fillRule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clipRule="evenodd" />
-              </svg>
-              About
-            </h3>
-            <p className="text-white/90 text-lg leading-relaxed">
-              {animal.description}
-            </p>
           </div>
 
           {/* Fun Facts Section */}
@@ -189,7 +189,7 @@ function AnimalDetailPage() {
               Fun Facts
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {animal.funFacts.map((fact, index) => (
+              {animal?.funFacts.map((fact, index) => (
                 <div 
                   key={index}
                   className="flex items-start space-x-3 p-4 rounded-xl"
@@ -223,16 +223,6 @@ function AnimalDetailPage() {
                          bg-slate-800/50 border-slate-700/80 hover:bg-slate-700/50 hover:border-slate-600/80"
             >
               View All {colorName} Animals
-            </Link>
-
-            <Link
-              to="/"
-              className="px-8 py-4 text-xl font-bold text-white rounded-full border-2
-                         transition-all duration-300 ease-out
-                         hover:scale-105 hover:shadow-lg uppercase tracking-wider inline-block
-                         bg-slate-800/50 border-slate-700/80 hover:bg-slate-700/50 hover:border-slate-600/80"
-            >
-              Back to Gallery
             </Link>
           </div>
         </div>

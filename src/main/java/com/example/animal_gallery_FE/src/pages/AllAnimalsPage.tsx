@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function AllAnimalsPage() {
   // Generate placeholder animals for demonstration
@@ -7,6 +7,7 @@ function AllAnimalsPage() {
     name: `Animal ${index + 1}`,
     color: ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet', 'white'][index % 8]
   }));
+  const navigate = useNavigate();
 
   // Color mapping for the circles
   const colorMap: { [key: string]: { primary: string; subtle: string } } = {
@@ -23,14 +24,31 @@ function AllAnimalsPage() {
   return (
     <div className="min-h-screen flex flex-col p-8 bg-gradient-to-br from-slate-900 via-black to-slate-900">
       {/* Back Button - Top Left */}
-      <Link 
-        to="/"
-        className="absolute top-8 left-8 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
-                   hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
-                   text-lg font-medium tracking-wide shadow-lg shadow-black/20"
-      >
-        ← Back Home
-      </Link>
+      <div className="relative mb-10 flex justify-between w-full">
+        <button 
+          onClick={() => navigate(-1)}
+          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          ← Back
+        </button>
+        <Link 
+          to="/"
+          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          🏠 Home
+        </Link>
+        <div 
+          className="opacity-0 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          🏠 Home
+        </div>
+      </div>
 
       {/* Header Section */}
       <div className="flex flex-col items-center space-y-8 mb-16 mt-8">
@@ -112,18 +130,6 @@ function AllAnimalsPage() {
           })}
         </div>
 
-        {/* Add Animal Button */}
-        <div className="flex justify-center mt-12">
-          <Link
-            to="/red/create"
-            className="px-8 py-4 text-xl font-bold text-white rounded-full border-2
-                       transition-all duration-300 ease-out
-                       hover:scale-105 hover:shadow-lg uppercase tracking-wider inline-block
-                       bg-purple-500/20 border-purple-500 text-purple-400"
-          >
-            + Create New Animal
-          </Link>
-        </div>
       </div>
     </div>
   );

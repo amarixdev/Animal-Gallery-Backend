@@ -105,15 +105,32 @@ function AddAnimalPage() {
         background: `linear-gradient(to bottom right, ${currentColor.subtle}, #000, ${currentColor.subtle})`
       }}
     >
-      {/* Back Button - Top Left */}
-      <Link 
-        to={`/${colorName}`}
-        className="absolute top-8 left-8 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
-                   hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
-                   text-lg font-medium tracking-wide shadow-lg shadow-black/20"
-      >
-        ← Back to {colorName}
-      </Link>
+      {/* Navigation Buttons - Top Left */}
+      <div className="relative mb-10 flex justify-between w-full">
+        <button 
+          onClick={() => navigate(-1)}
+          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          ← Back
+        </button>
+        <Link 
+          to="/"
+          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          🏠 Home
+        </Link>
+        <div 
+          className="opacity-0 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                     hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
+                     text-lg font-medium tracking-wide shadow-lg shadow-black/20"
+        >
+          🏠 Home
+        </div>
+      </div>
 
       {/* Header Section */}
       <div className="flex flex-col items-center space-y-8 mb-16 mt-8">
