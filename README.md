@@ -47,11 +47,16 @@ cd Animal-Gallery-FullStack
 2. Copy your connection string
 3. Update `src/main/resources/application.properties`:
 ```properties
-spring.datasource.url=YOUR_NEON_CONNECTION_STRING
+spring.application.name=animal-gallery
+
+spring.datasource.url=YOUR_CONNECTION_STRING
 spring.datasource.username=YOUR_USERNAME
 spring.datasource.password=YOUR_PASSWORD
+
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+spring.web.resources.static-locations=classpath:/static/,file:./uploads/
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
 ```
 
 #### Run Backend
