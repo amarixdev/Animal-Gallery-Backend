@@ -306,6 +306,7 @@ function CreateAnimalPage() {
                     name="lifespan"
                     value={formData.lifespan}
                     onChange={handleInputChange}
+                    onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     required
                     step="0.1"
                     min="0"
