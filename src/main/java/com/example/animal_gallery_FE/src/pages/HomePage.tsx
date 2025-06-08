@@ -218,6 +218,24 @@ function HomePage() {
             ))}
           </div>
         )}
+
+        {/* View All Button - Only show when not searching */}
+        {!showResults && (
+          <div className="mt-8">
+            <Link
+              to="/all"
+              className="px-12 py-4 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+                         hover:bg-slate-700/50 hover:border-slate-600/80 hover:scale-105
+                         transition-all duration-300 ease-out
+                         text-xl font-bold tracking-wide shadow-lg shadow-black/20
+                         hover:shadow-2xl hover:shadow-white/10
+                         bg-gradient-to-r hover:from-blue-500/20 hover:to-purple-500/20
+                         hover:border-blue-400/60"
+            >
+              View All Animals
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
