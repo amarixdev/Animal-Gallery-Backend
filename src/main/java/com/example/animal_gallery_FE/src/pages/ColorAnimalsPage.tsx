@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { type Animal } from '../types/Animal';
 import { staticAnimals } from '../data/static-animals';
 import { API_BASE_URL, BASE_URL } from '../util/BASEURL';
@@ -9,9 +9,12 @@ import { API_BASE_URL, BASE_URL } from '../util/BASEURL';
 
 function ColorAnimalsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { colorName } = useParams<{ colorName: string }>();
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     // This flag is used to prevent state updates after the component has unmounted,
@@ -57,7 +60,26 @@ function ColorAnimalsPage() {
     return () => {
       isCancelled = true;
     };
-  }, [colorName]);
+      }, [colorName]);
+
+  // Check for success message from navigation state
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      setShowSuccessMessage(true);
+      
+      // Clear the message after 5 seconds
+      const timer = setTimeout(() => {
+        setShowSuccessMessage(false);
+        setSuccessMessage('');
+      }, 5000);
+      
+      // Clear the navigation state
+      navigate(location.pathname, { replace: true, state: {} });
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location.state, navigate, location.pathname]);
 
   // Filter animals based on search term
   const filteredAnimals = animals.filter(animal =>
@@ -126,6 +148,18 @@ function ColorAnimalsPage() {
           🏠 Home
         </div>
       </div>
+
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div className="fixed top-4 right-4 bg-green-600/90 backdrop-blur-sm text-white px-6 py-4 rounded-xl border-2 border-green-500/80 shadow-xl z-50 max-w-md">
+          <div className="flex items-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6 text-green-200">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L7.53 10.53a.75.75 0 00-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+            </svg>
+            <p className="font-medium">{successMessage}</p>
+          </div>
+        </div>
+      )}
 
       {/* Header Section */}
       <div className="flex flex-col items-center space-y-8 mb-16 mt-8">

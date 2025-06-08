@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import type { Animal, AnimalModel } from '../types/Animal';
 import { API_BASE_URL } from '../util/BASEURL';
@@ -7,6 +7,8 @@ function CreateAnimalPage() {
   const { colorName } = useParams<{ colorName: string }>();
   const navigate = useNavigate();
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [showAchievement, setShowAchievement] = useState(false);
+  
  // Form state
  const [formData, setFormData] = useState({
   name: '',
@@ -47,7 +49,23 @@ function CreateAnimalPage() {
       }
       const result = await response.json();
       console.log('Animal data submitted successfully:', result);
-      navigate(`/${colorName}/all`);
+      
+      // Store Create achievement in localStorage
+      const achievements = JSON.parse(localStorage.getItem('crudAchievements') || '{}');
+      if (!achievements.create) {
+        achievements.create = true;
+        localStorage.setItem('crudAchievements', JSON.stringify(achievements));
+        setShowAchievement(true);
+        
+        // Hide achievement banner after 3 seconds and then navigate
+        setTimeout(() => {
+          setShowAchievement(false);
+          setTimeout(() => navigate(`/${colorName}/all`), 500);
+        }, 3000);
+      } else {
+        // If achievement already unlocked, navigate immediately
+        navigate(`/${colorName}/all`);
+      }
     } catch (error) {
       console.error('Error submitting animal data:', error);
     }
@@ -183,6 +201,39 @@ function CreateAnimalPage() {
           Create {colorName} Animal
         </h1>
       </div>
+
+      {/* Achievement Banner */}
+      {showAchievement && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50
+                        animate-pulse">
+          <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-md
+                          border-2 border-green-400/60 rounded-2xl p-8 shadow-2xl shadow-green-500/30
+                          flex items-center space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 bg-green-500/30 rounded-full flex items-center justify-center
+                              border-2 border-green-400">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+                     className="w-8 h-8 text-green-400">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L7.71 10.14a.75.75 0 00-1.42.59l1.96 4.71a.75.75 0 001.217-.09l3.99-5.59z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-white mb-1">
+                <span style={{ color: currentColor.primary }}>C</span>reate achievement unlocked!
+              </h2>
+              <p className="text-green-200/80 text-lg">
+                Your first animal has been successfully created
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay */}
+      {showAchievement && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"></div>
+      )}
 
       {/* Form Section */}
       <div className="flex-1 flex justify-center">

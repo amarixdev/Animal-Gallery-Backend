@@ -11,6 +11,7 @@ function UpdateAnimalPage() {
   const [existingAnimal, setExistingAnimal] = useState<Animal | null>(null);
   const [loading, setLoading] = useState(true);
   const [newImageUrl, setNewImageUrl] = useState<string | null>(null);
+  const [showAchievement, setShowAchievement] = useState(false);
   
   const isStatic = animalId && parseInt(animalId) <= staticAnimals.length;
 
@@ -195,10 +196,22 @@ function UpdateAnimalPage() {
       const result = await response.json();
       console.log('Animal data updated successfully:', result);
       
-      alert(`${formData.name} has been updated successfully!`);
-      
-      // Navigate back to the previous page (AnimalDetailPage)
-      navigate(-1);
+      // Store Update achievement in localStorage
+      const achievements = JSON.parse(localStorage.getItem('crudAchievements') || '{}');
+      if (!achievements.update) {
+        achievements.update = true;
+        localStorage.setItem('crudAchievements', JSON.stringify(achievements));
+        setShowAchievement(true);
+        
+        // Hide achievement banner after 3 seconds and then navigate
+        setTimeout(() => {
+          setShowAchievement(false);
+          setTimeout(() => navigate(-1), 500);
+        }, 3000);
+      } else {
+        // If achievement already unlocked, navigate immediately
+        navigate(-1);
+      }
     } catch (error) {
       console.error('Error updating animal data:', error);
       alert('Failed to update animal. Please try again.');
@@ -275,6 +288,40 @@ function UpdateAnimalPage() {
           Update {existingAnimal?.name || 'Animal'}
         </h1>
       </div>
+
+      {/* Achievement Banner */}
+      {showAchievement && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50
+                        animate-pulse">
+          <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 backdrop-blur-md
+                          border-2 border-blue-400/60 rounded-2xl p-8 shadow-2xl shadow-blue-500/30
+                          flex items-center space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 bg-blue-500/30 rounded-full flex items-center justify-center
+                              border-2 border-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+                     className="w-8 h-8 text-blue-400">
+                  <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
+                  <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-white mb-1">
+                <span style={{ color: currentColor.primary }}>U</span>pdate achievement unlocked!
+              </h2>
+              <p className="text-blue-200/80 text-lg">
+                Your first animal has been successfully updated
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay */}
+      {showAchievement && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"></div>
+      )}
 
       {/* Form Section */}
       <div className="flex-1 flex justify-center">
