@@ -1,3 +1,14 @@
+:root {
+  --red-color: #ef4444;
+  --orange-color: #f97316;
+  --yellow-color: #facc15;
+  --green-color: #22c55e;
+  --blue-color: #3b82f6;
+  --indigo-color: #6366f1;
+  --violet-color: #8b5cf6;
+  --white-color: #ffffff;
+}
+
 body  {
     background-color: #000000;
 }

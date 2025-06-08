@@ -37,12 +37,12 @@ public class AnimalService {
         return animalRepository.findByNameIgnoreCase(name);
     }
 
-    public List<Animal> getAllAnimals() {
-        return animalRepository.findAll();
-    }
-
-    public List<Animal> getAnimalsByLifespan(double lifespan) {
-        return animalRepository.findByLifespan(lifespan);
+    public List<Animal> getAllAnimals(String animalName) {
+        if (animalName == null || animalName.isEmpty()) {
+            return animalRepository.findAll();
+        } else {
+            return animalRepository.findByNameContainingIgnoreCase(animalName);
+        }
     }
 
     public Animal addAnimal(String colorName, Animal animal) {

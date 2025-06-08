@@ -14,7 +14,7 @@ public interface AnimalRepository extends JpaRepository<Animal, Long> {
 
     List<Animal> findByColorIgnoreCase(String color);
 
-    @Query(value = "SELECT * FROM animals WHERE lifespan >= ?1", nativeQuery = true)
-    List<Animal> findByLifespan(Double lifespan);
+    List<Animal> findByNameContainingIgnoreCase(String name);
+        
 
 }

@@ -23,8 +23,8 @@ public class AnimalController {
 
 
     @GetMapping("/all")
-    List<Animal> getAllAnimals() {
-        return animalService.getAllAnimals();
+    List<Animal> getAllAnimals(@RequestParam(required = false) String animalName) {
+        return animalService.getAllAnimals(animalName);
     }
     
     //Get all animals by color preview
