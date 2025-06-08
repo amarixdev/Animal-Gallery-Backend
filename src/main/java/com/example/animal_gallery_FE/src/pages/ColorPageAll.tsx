@@ -7,7 +7,7 @@ import { API_BASE_URL, BASE_URL } from '../util/BASEURL';
 
 
 
-function ColorAnimalsPage() {
+function ColorPageAll() {
   const navigate = useNavigate();
   const location = useLocation();
   const { colorName } = useParams<{ colorName: string }>();
@@ -305,4 +305,4 @@ function ColorAnimalsPage() {
   );
 }
 
-export default ColorAnimalsPage; 
+export default ColorPageAll; 

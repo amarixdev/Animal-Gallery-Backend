@@ -26,12 +26,6 @@ public class AnimalController {
     List<Animal> getAllAnimals(@RequestParam(required = false) String animalName) {
         return animalService.getAllAnimals(animalName);
     }
-    
-    //Get all animals by color preview
-    @GetMapping("/{colorName}")
-    List<Animal> getAnimalsByColorPreview(@PathVariable String colorName) {
-        return animalService.getAnimalsByColor(colorName);
-    }
 
     //Get all animals by color 
     @GetMapping("/{colorName}/all")
