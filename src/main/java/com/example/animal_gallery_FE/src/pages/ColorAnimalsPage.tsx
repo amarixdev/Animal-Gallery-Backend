@@ -11,6 +11,7 @@ function ColorAnimalsPage() {
   const navigate = useNavigate();
   const { colorName } = useParams<{ colorName: string }>();
   const [animals, setAnimals] = useState<Animal[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     // This flag is used to prevent state updates after the component has unmounted,
@@ -58,6 +59,20 @@ function ColorAnimalsPage() {
     };
   }, [colorName]);
 
+  // Filter animals based on search term
+  const filteredAnimals = animals.filter(animal =>
+    animal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    animal.scientificName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+  };
+
   // Color mapping for dynamic theming
   const colorMap: { [key: string]: { primary: string; subtle: string } } = {
     red: { primary: '#ef4444', subtle: '#3f1212' },
@@ -73,7 +88,7 @@ function ColorAnimalsPage() {
   const defaultColor = { primary: '#8b5cf6', subtle: '#2e1e4e' };
   const currentColor = colorMap[colorName?.toLowerCase() || ''] || defaultColor;
 
-  const placeholderCount = Math.max(0, 16 - animals.length);
+  const placeholderCount = Math.max(0, 16 - filteredAnimals.length);
   const placeholders = Array.from({ length: placeholderCount }, (_, index) => ({
     id: `placeholder-${index}`,
   }));
@@ -89,7 +104,7 @@ function ColorAnimalsPage() {
       <div className="relative mb-10 flex justify-between w-full">
         <button 
           onClick={() => navigate(-1)}
-          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+          className="cursor-pointer active:scale-95 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
                      hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
                      text-lg font-medium tracking-wide shadow-lg shadow-black/20"
         >
@@ -97,7 +112,7 @@ function ColorAnimalsPage() {
         </button>
         <Link 
           to="/"
-          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+          className="cursor-pointer active:scale-95 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
                      hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
                      text-lg font-medium tracking-wide shadow-lg shadow-black/20"
         >
@@ -121,11 +136,13 @@ function ColorAnimalsPage() {
         </h1>
 
         {/* Search Bar */}
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md relative">
           <div className="relative">
             <input
               type="text"
               placeholder={`Search ${colorName} animals...`}
+              value={searchTerm}
+              onChange={handleSearchChange}
               className="w-full px-6 py-4 bg-slate-800/50 text-white placeholder-slate-400/80
                          border-2 border-slate-700/80 rounded-full
                          focus:outline-none focus:ring-2 focus:border-2
@@ -138,62 +155,88 @@ function ColorAnimalsPage() {
                 } as React.CSSProperties
               }
             />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-5">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6 text-slate-400">
-                <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clipRule="evenodd" />
-              </svg>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-5 space-x-2">
+              {searchTerm && (
+                <button
+                  onClick={clearSearch}
+                  className="text-slate-400 hover:text-white transition-colors duration-200"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                  </svg>
+                </button>
+              )}
+              {!searchTerm && (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6 text-slate-400">
+                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clipRule="evenodd" />
+                </svg>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Results count */}
+        <p className="text-slate-400 text-sm">
+          {searchTerm 
+            ? `Showing ${filteredAnimals.length} of ${animals.length} ${colorName?.toLowerCase()} animals`
+            : `${animals.length} ${colorName?.toLowerCase()} animals`
+          }
+        </p>
       </div>
 
       {/* Animals Grid */}
       <div className="flex-1">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-x-6 gap-y-10 max-w-7xl mx-auto">
-          {animals.map((animal) => (
-            <div key={animal.animalId} className="flex flex-col items-center space-y-2 group">
-              {/* Animal Circle */}
-              <Link
-                to={`/${colorName}/${animal.animalId}`}
-                className="w-24 h-24 rounded-full border-4 cursor-pointer
-                           transition-all duration-300 ease-out
-                           hover:scale-110 hover:shadow-lg
-                           flex items-center justify-center overflow-hidden"
-                style={{
-                  backgroundColor: `${currentColor.primary}20`,
-                  borderColor: `${currentColor.primary}60`,
-                  boxShadow: `0 0 20px ${currentColor.primary}30`,
-                }}
-              >
-                <img src={ animal.animalId <= 24 ? `/images/${animal.imageUrl}` : `${BASE_URL}${animal.imageUrl}`} alt={animal.name} className="w-full h-full object-cover" />
-              </Link>
+        {filteredAnimals.length === 0 && searchTerm ? (
+          <div className="text-center py-16">
+            <p className="text-slate-400 text-lg">No {colorName?.toLowerCase()} animals found matching "{searchTerm}"</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-x-6 gap-y-10 max-w-7xl mx-auto">
+            {filteredAnimals.map((animal) => (
+              <div key={animal.animalId} className="flex flex-col items-center space-y-2 group">
+                {/* Animal Circle */}
+                <Link
+                  to={`/${colorName}/${animal.animalId}`}
+                  className="w-24 h-24 rounded-full border-4 cursor-pointer
+                             transition-all duration-300 ease-out
+                             hover:scale-110 hover:shadow-lg
+                             flex items-center justify-center overflow-hidden"
+                  style={{
+                    backgroundColor: `${currentColor.primary}20`,
+                    borderColor: `${currentColor.primary}60`,
+                    boxShadow: `0 0 20px ${currentColor.primary}30`,
+                  }}
+                >
+                  <img src={ animal.animalId <= 24 ? `/images/${animal.imageUrl}` : `${BASE_URL}${animal.imageUrl}`} alt={animal.name} className="w-full h-full object-cover" />
+                </Link>
 
-              {/* Animal Name */}
-              <span className="text-white text-sm font-medium opacity-80 text-center group-hover:opacity-100 transition-opacity duration-300">
-                {animal.name}
-              </span>
-            </div>
-          ))}
-          {placeholders.map((placeholder) => (
-            <div key={placeholder.id} className="flex flex-col items-center space-y-2 group">
-              <Link
-                to={`/${colorName}/create`}
-                className="w-24 h-24 rounded-full border-4 border-dashed flex items-center justify-center cursor-pointer transition-all duration-300 ease-out hover:scale-110 hover:shadow-lg hover:border-solid hover:bg-opacity-30"
-                style={{
-                  backgroundColor: `${currentColor.primary}10`,
-                  borderColor: `${currentColor.primary}40`,
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: `${currentColor.primary}` }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
-                </svg>
-              </Link>
-              <span className="text-white text-sm font-medium opacity-60 text-center group-hover:opacity-100 transition-opacity duration-300">
-                Add New
-              </span>
-            </div>
-          ))}
-        </div>
+                {/* Animal Name */}
+                <span className="text-white text-sm font-medium opacity-80 text-center group-hover:opacity-100 transition-opacity duration-300">
+                  {animal.name}
+                </span>
+              </div>
+            ))}
+            {!searchTerm && placeholders.map((placeholder) => (
+              <div key={placeholder.id} className="flex flex-col items-center space-y-2 group">
+                <Link
+                  to={`/${colorName}/create`}
+                  className="w-24 h-24 rounded-full border-4 border-dashed flex items-center justify-center cursor-pointer transition-all duration-300 ease-out hover:scale-110 hover:shadow-lg hover:border-solid hover:bg-opacity-30"
+                  style={{
+                    backgroundColor: `${currentColor.primary}10`,
+                    borderColor: `${currentColor.primary}40`,
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ color: `${currentColor.primary}` }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
+                  </svg>
+                </Link>
+                <span className="text-white text-sm font-medium opacity-60 text-center group-hover:opacity-100 transition-opacity duration-300">
+                  Add New
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex justify-center space-x-6 mt-12">

@@ -152,7 +152,7 @@ function CreateAnimalPage() {
       <div className="relative mb-10 flex justify-between w-full">
         <button 
           onClick={() => navigate(-1)}
-          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+          className="cursor-pointer active:scale-95 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
                      hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
                      text-lg font-medium tracking-wide shadow-lg shadow-black/20"
         >
@@ -160,7 +160,7 @@ function CreateAnimalPage() {
         </button>
         <Link 
           to="/"
-          className="px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
+          className="cursor-pointer active:scale-95 px-6 py-3 bg-slate-800/50 text-white rounded-full border-2 border-slate-700/80
                      hover:bg-slate-700/50 hover:border-slate-600/80 transition-all duration-300
                      text-lg font-medium tracking-wide shadow-lg shadow-black/20"
         >

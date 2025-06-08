@@ -47,7 +47,6 @@ public class AnimalController {
         return animalService.getAnimalById(animalId);
     }
 
-
     //Update animal
     @PutMapping("/{colorName}/{animalId}/update")
     Animal updateAnimal(@PathVariable Long animalId, @RequestBody Animal animal) {
