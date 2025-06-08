@@ -5,7 +5,7 @@ import { staticAnimals } from '../data/static-animals';
 import { API_BASE_URL, BASE_URL } from '../util/BASEURL';
 
 
-function ColorPage() {
+function ColorPagePreview() {
   const navigate = useNavigate();
   const { colorName } = useParams<{ colorName: string }>();
   const [animals, setAnimals] = useState<Animal[]>([]);
@@ -19,7 +19,7 @@ function ColorPage() {
 
     const fetchAnimals = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/${colorName}`);
+        const response = await fetch(`${API_BASE_URL}/${colorName}/all`);
         const data = await response.json();
         setAnimals(prevAnimals => [...prevAnimals, ...data]);
       } catch (error) {
@@ -50,15 +50,13 @@ function ColorPage() {
         );
 
         // Search in API animals (filtered by color)
-        const response = await fetch(`${API_BASE_URL}/${colorName}?animalName=${encodeURIComponent(searchTerm)}`);
+        const response = await fetch(`${API_BASE_URL}/${colorName}/all?animalName=${encodeURIComponent(searchTerm)}`);
         let apiResults: Animal[] = [];
         
         if (response.ok) {
-          const allApiResults = await response.json();
-          // Filter API results by search term and color
-          apiResults = allApiResults.filter((animal: Animal) =>
-            animal.color.toLowerCase() === colorName?.toLowerCase() &&
-            animal.name.toLowerCase().includes(searchTerm.toLowerCase())
+          apiResults = await response.json();
+          apiResults = apiResults.filter((animal: Animal) =>
+            animal.color.toLowerCase() === colorName?.toLowerCase()
           );
         }
 
@@ -351,4 +349,4 @@ function ColorPage() {
   );
 }
 
-export default ColorPage; 
+export default ColorPagePreview; 

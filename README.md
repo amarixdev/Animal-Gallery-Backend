@@ -141,7 +141,6 @@ Unlock achievements by performing your first:
 The backend provides RESTful endpoints for animal management:
 
 - `GET /api/all` - Get all animals (with optional search)
-- `GET /api/{color}` - Get animals by color (preview)
 - `GET /api/{color}/all` - Get all animals by color
 - `GET /api/{color}/{id}` - Get specific animal
 - `POST /api/{color}/create` - Create new animal

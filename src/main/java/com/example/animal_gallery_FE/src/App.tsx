@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import ColorPage from './pages/ColorPage';
+import ColorPage from './pages/ColorPagePreview';
 import AddAnimalPage from './pages/CreateAnimalPage';
 import AllAnimalsPage from './pages/AllAnimalsPage';
-import ColorAnimalsPage from './pages/ColorAnimalsPage';
+import ColorAnimalsPage from './pages/ColorPageAll';
 import AnimalDetailPage from './pages/AnimalDetailPage';
 import UpdateAnimalPage from './pages/UpdateAnimalPage';
 import UpdateConfirmationPage from './pages/UpdateConfirmationPage';
