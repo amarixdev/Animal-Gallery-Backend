@@ -79,7 +79,9 @@ public class AnimalService {
 
         //update animal
         existingAnimal.setName(animal.getName());
+        existingAnimal.setScientificName(animal.getScientificName());
         existingAnimal.setColor(animal.getColor());
+        existingAnimal.setDiet(animal.getDiet());
         existingAnimal.setLifespan(animal.getLifespan());
         existingAnimal.setFunFacts(animal.getFunFacts());
         existingAnimal.setImageUrl(animal.getImageUrl());
