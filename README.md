@@ -1,215 +1,175 @@
-# su25-jpa-crud-api
-## Description
-Simple CRUD API for Animal Objects with JPA (Hibernate)
+# Animal Gallery
 
-### Version
-1.0.0
+![Animal Gallery Preview](preview.png)
 
-## Installation
-- Get the project
-    - clone
-        ```
-      https://github.com/amarixdev/Animal-Gallery-Backend.git
-        ```
-    - OR download zip.
-- Open the project in VS Code.
-- This project is built to run with jdk 21.
-- [Dependencies](https://github.com/uncg-csc340/su25-jpa-crud-api/blob/3149ec363e4aae4baebe6f755df7d4c2d79c9d2c/pom.xml#L32) to JPA and Postgres in addition to the usual Spring Web. JPA handles the persistence, Postgresql is the database to be used.
-- [`/src/main/resources/application.properties`](https://github.com/uncg-csc340/su25-jpa-crud-api/blob/main/src/main/resources/application.properties) This file  is the configuration for the PostgreSQL database to use for the API.
-  - You MUST have the database up and running before running the project!
-    - Login to your neon.tech account.
-    - Locate your database project.
-    - On the project dashboard, click on "Connect" and select Java.
-    - Copy the connection string provided.
-    - Paste it as a value for the property `spring.datasource.url`. No quotation marks.
-- Build and run the main class. You should see a new table created in the Neon database.
+## Overview
+Animal Gallery is a full-stack web application that allows users to browse, create, update, and delete animal entries organized by color. The application features an interactive interface with search functionality, achievement tracking, and responsive design.
+
+### Features
+- 🎨 **Color-organized browsing** - Animals categorized by 8 different colors
+- 🔍 **Live search** - Search across all animals with real-time results
+- ✨ **CRUD Operations** - Create, read, update, and delete animal entries
+- 🏆 **Achievement System** - Unlock achievements for CRUD operations
+- 📱 **Responsive Design** - Works seamlessly on desktop and mobile
+- 🖼️ **Image Upload** - Support for custom animal images
+
+### Tech Stack
+**Frontend:**
+- React TypeScript
+- Tailwind CSS
+- React Router
+- Vite
+
+**Backend:**
+- Spring Boot
+- PostgreSQL
+- JPA/Hibernate
+- Java 21
+
+## Prerequisites
+- **Java 21** or higher
+- **Node.js** (v16 or higher)
+- **PostgreSQL database** (Neon.tech recommended)
+- **Git**
+
+## Installation & Setup
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/amarixdev/Animal-Gallery-FullStack.git
+cd Animal-Gallery-FullStack
+```
+
+### 2. Backend Setup (Spring Boot)
+
+#### Configure Database
+1. Create a PostgreSQL database on [Neon.tech](https://neon.tech)
+2. Copy your connection string
+3. Update `src/main/resources/application.properties`:
+```properties
+spring.datasource.url=YOUR_NEON_CONNECTION_STRING
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+```
+
+#### Run Backend
+```bash
+# From project root
+./mvnw spring-boot:run
+```
+
+The backend will start on `http://localhost:8080`
+
+### 3. Frontend Setup (React)
+
+#### Install Dependencies
+```bash
+# Navigate to frontend directory
+cd src/main/java/com/example/animal_gallery_FE
+
+# Install dependencies
+npm install
+```
+
+#### Configure Base URL
+Update `src/util/BASEURL.ts` if needed:
+```typescript
+export const API_BASE_URL = 'http://localhost:8080/api';
+export const BASE_URL = 'http://localhost:8080';
+```
+
+#### Run Frontend
+```bash
+npm run dev
+```
+
+The frontend will start on `http://localhost:5173`
+
+## Project Structure
+```
+animal-gallery-BE/
+├── src/main/java/com/example/animal_gallery_BE/
+│   ├── animal/                     # Backend animal entity & services
+│   └── AnimalGalleryBeApplication.java
+├── src/main/java/com/example/animal_gallery_FE/
+│   ├── src/
+│   │   ├── components/            # Reusable React components
+│   │   ├── pages/                 # Main application pages
+│   │   ├── types/                 # TypeScript type definitions
+│   │   ├── data/                  # Static data and configurations
+│   │   └── util/                  # Utility functions
+│   ├── public/
+│   │   ├── images/                # Static animal images
+│   │   └── audio/                 # Sound effects
+│   └── package.json
+└── uploads/                       # User-uploaded images
+```
+
+## Usage
+
+### Getting Started
+1. Visit `http://localhost:5173` after starting both servers
+2. Browse animals by clicking on color words on the homepage
+3. Use the search bar to find specific animals
+4. Click "View All Animals" to see the complete gallery
+
+### Adding Animals
+1. Navigate to any color page (e.g., `/red`)
+2. Click "Add New [Color] Animal"
+3. Fill out the form with animal details
+4. Upload an image and submit
+
+### Managing Animals
+- **View Details**: Click on any animal card
+- **Update**: Click the "Update" button on animal detail pages
+- **Delete**: Click the "Delete" button and confirm
+
+### Achievement System
+Unlock achievements by performing your first:
+- **C**reate - Add your first animal
+- **U**pdate - Modify an existing animal  
+- **D**elete - Remove an animal
 
 ## API Endpoints
-Base URL: [`http://localhost:8080`](http://localhost:8080)
+The backend provides RESTful endpoints for animal management:
 
+- `GET /api/all` - Get all animals (with optional search)
+- `GET /api/{color}` - Get animals by color (preview)
+- `GET /api/{color}/all` - Get all animals by color
+- `GET /api/{color}/{id}` - Get specific animal
+- `POST /api/{color}/create` - Create new animal
+- `PUT /api/{color}/{id}/update` - Update animal
+- `DELETE /api/{color}/{id}/delete` - Delete animal
+- `POST /api/upload` - Upload image
 
-1. ### [`/animals`](http://localhost:8080/animals) (GET)
+## Development
 
-Returns a list of animals.  
-If the optional **`lifespan`** query parameter is supplied, the list is filtered to animals whose average lifespan is **greater than or equal to** the given value (in years).
-
-| Parameter | Type   | Required | Description                                               |
-|-----------|--------|----------|-----------------------------------------------------------|
-| lifespan  | number | No       | Minimum lifespan in **years** to include in the response |
-
-### Example – Retrieve all animals
-
-```GET /animals```
-
-```Accept: application/json```
-
-#### Response - A JSON array of Animal objects.
-
- ```
-[
-    {
-    "animalId": 1,
-    "color": "black",
-    "name": "Black Panther",
-    "scientificName": "Panthera pardus",
-    "habitat": "Dense forests of Africa and Asia",
-    "description": "The black panther is a melanistic color variant of big cats, most commonly leopards and jaguars. Known for their sleek black coat and incredible stealth, they are powerful apex predators.",
-    "diet": "Carnivorous - deer, wild boar, monkeys",
-    "lifespan": 15.0,
-    "funFacts": [
-      "Black panthers can see six times better at night than humans",
-      "Their dark coloration is caused by a mutation in a gene that controls coat color",
-      "They are excellent swimmers and climbers"
-    ]
-  },
-  {
-    "animalId": 2,
-    "color": "white",
-    "name": "Snowy Owl",
-    "scientificName": "Bubo scandiacus",
-    "habitat": "Arctic regions",
-    "description": "Snowy owls are large, white owls that are native to the Arctic regions. They are known for their distinctive white fur and ability to camouflage in snowy environments.",
-    "diet": "Carnivorous - lemmings, birds, eggs, berries",
-    "lifespan": 20.0,
-    "funFacts": [
-      "They can fly at speeds of up to 40 mph (64 km/h)",
-      "They are the largest owl species in the world",
-      "They are able to see in both visible and ultraviolet light"
-    ]
-  }
-]
+### Frontend Development
+```bash
+cd src/main/java/com/example/animal_gallery_FE
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
 ```
 
-### Example – Filter by lifespan ≥ 20 years
-
-```GET /animals?lifespan=20```
-
-```Accept: application/json```
-
-#### Response - A JSON array of Animal objects with lifespans greator or equal to 20.
-```
-[
-  {
-    "animalId": 2,
-    "color": "white",
-    "name": "Snowy Owl",
-    "scientificName": "Bubo scandiacus",
-    "habitat": "Arctic regions",
-    "description": "Snowy owls are large, white owls that are native to the Arctic regions. They are known for their distinctive white fur and ability to camouflage in snowy environments.",
-    "diet": "Carnivorous - lemmings, birds, eggs, berries",
-    "lifespan": 20.0,
-    "funFacts": [
-      "They can fly at speeds of up to 40 mph (64 km/h)",
-      "They are the largest owl species in the world",
-      "They are able to see in both visible and ultraviolet light"
-    ]
-  },
-  {
-    "animalId": 5,
-    "color": "violet",
-    "name": "Purple Sea Urchin",
-    "scientificName": "Strongylocentrotus purpuratus",
-    "habitat": "Rocky shores and kelp forests in the Pacific Ocean",
-    "description": "Purple Sea Urchins are spiny marine animals known for their vibrant purple color. They play a crucial role in the marine ecosystem by grazing on algae.",
-    "diet": "Herbivorous - primarily kelp and algae",
-    "lifespan": 30.0,
-    "funFacts": [
-      "They have a unique water vascular system that helps them move and feed",
-      "Their spines can regenerate if broken",
-      "They are an important food source for sea otters and other marine animals"
-    ]
-  }
-]
-
+### Backend Development
+```bash
+./mvnw spring-boot:run           # Run with Maven wrapper
+./mvnw clean compile             # Clean and compile
+./mvnw test                      # Run tests
 ```
 
-2. ### [`/animal`](http://localhost:8080/animal) (GET)
+## Contributing
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Returns **one** animal that matches a given **`color`** or **`name`** (exact match).  
-At least one of the two query parameters must be supplied; if both are provided, `color` takes precedence.
+## License
+This project is open source and available under the [MIT License](LICENSE).
 
-
-| Parameter | Type   | Required | Description                                                                                 |
-|-----------|--------|----------|---------------------------------------------------------------------------------------------|
-| color     | string | No       | Exact coat/feather color. **Allowed values:** `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, `violet`, `black`, `white`. |
-| name      | string | No       | Common name of the animal (e.g. `Snowy Owl`).                                               |
-
-> **Validation**  
-> • If neither `color` nor `name` is supplied, the service returns **HTTP 400** 
-
-### Example – Look up by color
-
-```GET /animal?color=blue```
-
-```Accept: application/json```
-
-
-#### Response - A single JSON object representing a blue-colored animal
-
-```
- {
-  "animalId": 4,
-  "color": "blue",
-  "name": "Blue Morpho Butterfly",
-  "scientificName": "Morpho peleides",
-  "habitat": "Tropical rainforests of Central and South America",
-  "description": "The Blue Morpho Butterfly is one of the largest butterflies in the world, known for its vibrant blue wings. The iridescent blue color is due to microscopic scales on the backs of their wings, which reflect light.",
-  "diet": "Nectar, rotting fruits, and tree sap",
-  "lifespan": 0.315,
-  "funFacts": [
-    "Their wingspan can reach up to 8 inches",
-    "They are more active during the day and rest at night",
-    "The underside of their wings is brown, providing camouflage from predators"
-}
-```
-
-6. ### [`/animals`](http://localhost:8080/animals) (POST)
-Creates a new Animal entry
-
-### Example – Create an animal
-
-```POST /animals```
-
-```Accept: application/json```
-
-
-
-
-#### Request Body
-An animal object. Note the object does not include an ID as this is autogenerated.
-```
-  {
-      "color": "green",
-      "name": "Chameleon",
-      "scientificName": "Chamaeleonidae",
-      "habitat": "Rainforests, savannas, and sometimes deserts",
-      "description": "Chameleons are known for their ability to change colors and their long, sticky tongues used to catch prey. They have unique eyes that can move independently of each other.",
-      "diet": "Insectivorous - primarily insects and small invertebrates",
-      "lifespan": 10,
-      "funFacts": [
-        "They can rotate their eyes independently to look in two different directions at once",
-        "Their color change is used for communication and temperature regulation",
-        "They have a prehensile tail that helps them grasp branches"
-    ]
-  }
-```
-#### Response - The newly created Animal.
-
-```
-  {
-  "animalId": 6,
-  "color": "green",
-  "name": "Chameleon",
-  "scientificName": "Chamaeleonidae",
-  "habitat": "Rainforests, savannas, and sometimes deserts",
-  "description": "Chameleons are known for their ability to change colors and their long, sticky tongues used to catch prey. They have unique eyes that can move independently of each other.",
-  "diet": "Insectivorous - primarily insects and small invertebrates",
-  "lifespan": 10.0,
-  "funFacts": [
-    "They can rotate their eyes independently to look in two different directions at once",
-    "Their color change is used for communication and temperature regulation",
-    "They have a prehensile tail that helps them grasp branches"
-  ]
-}
-```
-
+## Support
+For questions or issues, please open an issue on the GitHub repository.
